@@ -32,8 +32,7 @@ public class CameraMove : MonoBehaviour
         moveCo = StartCoroutine(FollowTarget());
     }
     private IEnumerator FollowTarget()
-    {
-        Debug.Log("called");
+    { 
         Vector3 targetVec = new Vector3(
             currentState == DirectionState.Left ?
             target.position.x + targetOffsetX : target.position.x - targetOffsetX,
@@ -44,7 +43,7 @@ public class CameraMove : MonoBehaviour
             targetVec = new Vector3(
                 currentState == DirectionState.Left ? 
                 target.position.x + targetOffsetX : target.position.x - targetOffsetX,
-                target.position.y, transform.position.z);
+                transform.position.y, transform.position.z); 
             transform.position = Vector3.MoveTowards(transform.position, targetVec, moveSpeed*Time.deltaTime); 
             yield return null;
         }
