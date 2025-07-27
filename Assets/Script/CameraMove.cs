@@ -13,7 +13,8 @@ public class CameraMove : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-         Player.OnPlayerMoved += Move;
+        Player.OnPlayerMoved += Move;
+        Player.OnPlayerStopped += StopFollowTarget;
         currentState = DirectionState.None;
     }
 
@@ -25,14 +26,17 @@ public class CameraMove : MonoBehaviour
     public void Move(Vector2 vec)
     {
         DirectionState state = vec.x>0? DirectionState.Left: DirectionState.Right;
-        if (currentState == state) return;
+        if (currentState == state)
+        {
+            return;
+        }
         if (moveCo!=null) { StopCoroutine(moveCo); moveCo = null; }
 
         currentState = state;
         moveCo = StartCoroutine(FollowTarget());
     }
     private IEnumerator FollowTarget()
-    { 
+    {
         Vector3 targetVec = new Vector3(
             currentState == DirectionState.Left ?
             target.position.x + targetOffsetX : target.position.x - targetOffsetX,
@@ -49,5 +53,15 @@ public class CameraMove : MonoBehaviour
         }
         /*Debug.Log("목표 위치 도착 완료");
         moveCo = null;*/
+    }
+    private void StopFollowTarget()
+    {
+        if (moveCo != null) 
+        { 
+            StopCoroutine(moveCo); 
+            moveCo = null; 
+        }
+
+        currentState = DirectionState.None;
     }
 }

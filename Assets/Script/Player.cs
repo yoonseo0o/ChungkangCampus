@@ -9,7 +9,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 public class Player : MonoBehaviour
 {
-    enum MoveState { Idle, Walk, Run }
+    enum MoveState { Idle, Walk, Run, Focusing }
     [Header("ResourceConfig")]
     float mana;
     [Header("StatusFlags")]
@@ -19,7 +19,8 @@ public class Player : MonoBehaviour
     [SerializeField] private float mouseXThreshold;//임계?
     [SerializeField] private float walkSpeed;
     [SerializeField] private float runSpeed;
-    public static event Action<Vector2> OnPlayerMoved; 
+    public static event Action<Vector2> OnPlayerMoved;
+    public static event Action OnPlayerStopped;
     Vector2 moveVec;
     Coroutine moveCo;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -33,9 +34,27 @@ public class Player : MonoBehaviour
     {
         Move();
         Debug.DrawLine(transform.position-new Vector3(mouseXThreshold,0,0), transform.position + new Vector3(mouseXThreshold, 0, 0),Color.red);
+        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        float maxDistance = 15;
+        RaycastHit2D hit=Physics2D.Raycast(mousePos,transform.forward, maxDistance);
+        if(hit)
+        { 
+            moveState = MoveState.Focusing;
+            if (moveCo != null)
+            {
+                StopCoroutine(moveCo);
+                moveCo = null;
+            }
+            OnPlayerStopped?.Invoke();
+        }
+        else
+        {
+            moveState = MoveState.Idle;
+        }
     } 
     private void Move()
     {
+        if (moveState == MoveState.Focusing) return;
         // 마우스 포인터가 플레이어의 어느쪽에 있는지 판단
         float mouseX = Camera.main.ScreenToWorldPoint (new Vector3(Input.mousePosition.x, 
             Input.mousePosition.y, -Camera.main.transform.position.z)).x;
@@ -50,13 +69,16 @@ public class Player : MonoBehaviour
             if (moveCo != null) {
                 StopCoroutine(moveCo);
                 moveCo = null;
-            };
+            }
             return;
         }
         else if (Mathf.Abs(playerMouseDistance) <= mouseXThreshold)
         {
             if (moveState == MoveState.Walk && moveVec == prevMoveVec)
+            {
+                Debug.Log("walk 상태 같은 vector값 return");
                 return;
+            }
             moveState = MoveState.Walk;
             if (moveCo != null) 
                 StopCoroutine(moveCo); 
@@ -65,7 +87,10 @@ public class Player : MonoBehaviour
         else if(Mathf.Abs(playerMouseDistance) > mouseXThreshold)
         {
             if (moveState == MoveState.Run && moveVec == prevMoveVec)
+            {
+                Debug.Log("Run 상태 같은 vector값 return");
                 return;
+            }
             moveState = MoveState.Run;
             if (moveCo != null) 
                 StopCoroutine(moveCo); 
@@ -101,4 +126,5 @@ public class Player : MonoBehaviour
     {
 
     }
+
 }
