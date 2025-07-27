@@ -49,7 +49,8 @@ public class Player : MonoBehaviour
         }
         else
         {
-            moveState = MoveState.Idle;
+            if (moveState == MoveState.Focusing)
+                moveState = MoveState.Idle;
         }
     } 
     private void Move()
@@ -76,7 +77,6 @@ public class Player : MonoBehaviour
         {
             if (moveState == MoveState.Walk && moveVec == prevMoveVec)
             {
-                Debug.Log("walk 상태 같은 vector값 return");
                 return;
             }
             moveState = MoveState.Walk;
@@ -88,7 +88,6 @@ public class Player : MonoBehaviour
         {
             if (moveState == MoveState.Run && moveVec == prevMoveVec)
             {
-                Debug.Log("Run 상태 같은 vector값 return");
                 return;
             }
             moveState = MoveState.Run;
