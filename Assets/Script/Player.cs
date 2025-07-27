@@ -23,6 +23,7 @@ public class Player : MonoBehaviour
     public static event Action OnPlayerStopped;
     Vector2 moveVec;
     Coroutine moveCo;
+    RaycastHit2D hit;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -32,39 +33,45 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Move();
-        Debug.DrawLine(transform.position-new Vector3(mouseXThreshold,0,0), transform.position + new Vector3(mouseXThreshold, 0, 0),Color.red);
-        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        float maxDistance = 15;
-        RaycastHit2D hit=Physics2D.Raycast(mousePos,transform.forward, maxDistance);
-        if(hit)
-        { 
-            moveState = MoveState.Focusing;
-            if (moveCo != null)
-            {
-                StopCoroutine(moveCo);
-                moveCo = null;
-            }
-            OnPlayerStopped?.Invoke();
-        }
-        else
-        {
-            if (moveState == MoveState.Focusing)
-                moveState = MoveState.Idle;
-        }
-    } 
+        Debug.DrawLine(transform.position - new Vector3(mouseXThreshold, 0, 0), transform.position + new Vector3(mouseXThreshold, 0, 0), Color.red);
+
+        EvaluateInput();
+    }
     private void Move()
     {
-        if (moveState == MoveState.Focusing) return;
+        switch(moveState)
+        {
+            case MoveState.Focusing:
+                break;
+            case MoveState.Idle:
+                if (moveCo != null)
+                {
+                    StopCoroutine(moveCo);
+                    moveCo = null;
+                }
+                break;
+            case MoveState.Walk:
+                if (moveCo != null)
+                    StopCoroutine(moveCo);
+                moveCo = StartCoroutine(WalkCo(moveVec * walkSpeed));
+                break;
+            case MoveState.Run: 
+                if (moveCo != null)
+                    StopCoroutine(moveCo);
+                moveCo = StartCoroutine(WalkCo(moveVec * runSpeed));
+                break;
+
+        }
+        /*if (moveState == MoveState.Focusing) return;
         // 마우스 포인터가 플레이어의 어느쪽에 있는지 판단
-        float mouseX = Camera.main.ScreenToWorldPoint (new Vector3(Input.mousePosition.x, 
+        float mouseX = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x,
             Input.mousePosition.y, -Camera.main.transform.position.z)).x;
         float playerMouseDistance = mouseX - transform.position.x;
         Vector2 prevMoveVec = moveVec;
         moveVec = playerMouseDistance < 0 ? Vector2.left : Vector2.right;
-        
+
         // 포인터 거리에 따라 이동 상태
-        if (Mathf.Abs(playerMouseDistance) <= mouseXThreshold/10)
+        if (Mathf.Abs(playerMouseDistance) <= mouseXThreshold / 10)
         {
             moveState = MoveState.Idle;
             if (moveCo != null) {
@@ -80,38 +87,84 @@ public class Player : MonoBehaviour
                 return;
             }
             moveState = MoveState.Walk;
-            if (moveCo != null) 
-                StopCoroutine(moveCo); 
+            if (moveCo != null)
+                StopCoroutine(moveCo);
             moveCo = StartCoroutine(WalkCo(moveVec * walkSpeed));
         }
-        else if(Mathf.Abs(playerMouseDistance) > mouseXThreshold)
+        else if (Mathf.Abs(playerMouseDistance) > mouseXThreshold)
         {
             if (moveState == MoveState.Run && moveVec == prevMoveVec)
             {
                 return;
             }
             moveState = MoveState.Run;
-            if (moveCo != null) 
-                StopCoroutine(moveCo); 
+            if (moveCo != null)
+                StopCoroutine(moveCo);
             moveCo = StartCoroutine(WalkCo(moveVec * runSpeed));
-        }
+        }*/
     }
     IEnumerator WalkCo(Vector2 vec)
     {
         OnPlayerMoved?.Invoke(vec);
         while (true)
         {
-            transform.Translate(vec  * Time.deltaTime);
+            transform.Translate(vec * Time.deltaTime);
             yield return null;
         }
-    } 
+    }
     private void SendEyeLaser()
     {
 
     }
+    private void EvaluateInput()
+    {
+        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        float maxDistance = 15;
+        RaycastHit2D prevhit = hit;
+        hit = Physics2D.Raycast(mousePos, transform.forward, maxDistance);
+
+        if (prevhit != hit)
+            Focusing();
+        else if (hit)
+            return;
+        else
+        {
+            float playerMouseDistance = mousePos.x - transform.position.x;
+            Vector2 prevMoveVec = moveVec;
+            moveVec = playerMouseDistance < 0 ? Vector2.left : Vector2.right;
+            MoveState prevMoveState = moveState;
+
+            if (Mathf.Abs(playerMouseDistance) <= mouseXThreshold / 10)
+                moveState = MoveState.Idle;
+            else if (Mathf.Abs(playerMouseDistance) <= mouseXThreshold)
+                moveState = MoveState.Walk;
+            else if (Mathf.Abs(playerMouseDistance) > mouseXThreshold)
+                moveState = MoveState.Run;
+
+            if (prevMoveState != moveState || prevMoveVec != moveVec)
+            {
+                Move();
+            }
+
+        }
+    }
     private void Focusing()
     {
-
+        if (hit)
+        {
+            moveState = MoveState.Focusing;
+            if (moveCo != null)
+            {
+                StopCoroutine(moveCo);
+                moveCo = null;
+            }
+                OnPlayerStopped?.Invoke();
+        }
+        else
+        {
+            if (moveState == MoveState.Focusing)
+                moveState = MoveState.Idle;
+        }
     }
     private void FeverTime()
     {
