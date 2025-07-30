@@ -9,21 +9,24 @@ using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 public class Player : MonoBehaviour
 {
-    enum MoveState { Idle, Walk, Run, Focusing }
     [Header("ResourceConfig")]
     float mana;
     [Header("StatusFlags")]
     bool isMask;
+    enum MoveState { Idle, Walk, Run, Focusing }
     [SerializeField] private MoveState moveState;
     [Header("ControlParameters")]
     [SerializeField] private float mouseXThreshold;//임계?
     [SerializeField] private float walkSpeed;
     [SerializeField] private float runSpeed;
+    Vector2 moveVec;
+    RaycastHit2D hit;
+    Coroutine moveCo;
+
     public static event Action<Vector2> OnPlayerMoved;
     public static event Action OnPlayerStopped;
-    Vector2 moveVec;
-    Coroutine moveCo;
-    RaycastHit2D hit;
+    // attack male
+    private MaleStudent attackedMale;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -62,46 +65,6 @@ public class Player : MonoBehaviour
                 break;
 
         }
-        /*if (moveState == MoveState.Focusing) return;
-        // 마우스 포인터가 플레이어의 어느쪽에 있는지 판단
-        float mouseX = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x,
-            Input.mousePosition.y, -Camera.main.transform.position.z)).x;
-        float playerMouseDistance = mouseX - transform.position.x;
-        Vector2 prevMoveVec = moveVec;
-        moveVec = playerMouseDistance < 0 ? Vector2.left : Vector2.right;
-
-        // 포인터 거리에 따라 이동 상태
-        if (Mathf.Abs(playerMouseDistance) <= mouseXThreshold / 10)
-        {
-            moveState = MoveState.Idle;
-            if (moveCo != null) {
-                StopCoroutine(moveCo);
-                moveCo = null;
-            }
-            return;
-        }
-        else if (Mathf.Abs(playerMouseDistance) <= mouseXThreshold)
-        {
-            if (moveState == MoveState.Walk && moveVec == prevMoveVec)
-            {
-                return;
-            }
-            moveState = MoveState.Walk;
-            if (moveCo != null)
-                StopCoroutine(moveCo);
-            moveCo = StartCoroutine(WalkCo(moveVec * walkSpeed));
-        }
-        else if (Mathf.Abs(playerMouseDistance) > mouseXThreshold)
-        {
-            if (moveState == MoveState.Run && moveVec == prevMoveVec)
-            {
-                return;
-            }
-            moveState = MoveState.Run;
-            if (moveCo != null)
-                StopCoroutine(moveCo);
-            moveCo = StartCoroutine(WalkCo(moveVec * runSpeed));
-        }*/
     }
     IEnumerator WalkCo(Vector2 vec)
     {
@@ -114,19 +77,41 @@ public class Player : MonoBehaviour
     }
     private void SendEyeLaser()
     {
-
+        if(attackedMale == null)
+        {
+            Debug.Log("attackedMale is null");
+            return;
+        }
+        attackedMale.ReceiveEyeLaser();
+    }
+    private void InterruptedEyeLaser()
+    {
+        if (attackedMale == null)
+        {
+            Debug.Log("attackedMale is null");
+            return;
+        }
+        attackedMale.ReceiveInterruptedEyeLaser();
     }
     private void EvaluateInput()
     {
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        float maxDistance = 15;
         RaycastHit2D prevhit = hit;
-        hit = Physics2D.Raycast(mousePos, transform.forward, maxDistance);
+        hit = Physics2D.Raycast(mousePos, transform.forward, 15f);
 
         if (prevhit != hit)
             Focusing();
-        else if (hit)
-            return;
+        else if(hit)
+        {
+            if(Input.GetKeyDown (KeyCode.Mouse0))
+            {
+                SendEyeLaser();
+            }
+            else if (Input.GetKeyUp(KeyCode.Mouse0))
+            {
+                InterruptedEyeLaser();
+            }
+        }
         else
         {
             float playerMouseDistance = mousePos.x - transform.position.x;
@@ -158,10 +143,13 @@ public class Player : MonoBehaviour
                 StopCoroutine(moveCo);
                 moveCo = null;
             }
-                OnPlayerStopped?.Invoke();
+            OnPlayerStopped?.Invoke();
+            attackedMale = hit.transform.GetComponent<MaleStudent>();
         }
         else
         {
+            InterruptedEyeLaser();
+            attackedMale = null;
             if (moveState == MoveState.Focusing)
                 moveState = MoveState.Idle;
         }
