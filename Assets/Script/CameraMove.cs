@@ -30,7 +30,11 @@ public class CameraMove : MonoBehaviour
         {
             return;
         }
-        if (moveCo!=null) { StopCoroutine(moveCo); moveCo = null; }
+        if (moveCo != null) 
+        { 
+            StopCoroutine(moveCo); 
+            moveCo = null; 
+        }
 
         currentState = state;
         moveCo = StartCoroutine(FollowTarget());

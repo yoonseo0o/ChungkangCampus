@@ -13,7 +13,7 @@ public class Player : MonoBehaviour
     float mana;
     [Header("StatusFlags")]
     bool isMask;
-    enum MoveState { Idle, Walk, Run, Focusing }
+    enum MoveState { Idle, Walk, Run, Focusing, RivalMatch }
     [SerializeField] private MoveState moveState;
     [Header("ControlParameters")]
     [SerializeField] private float mouseXThreshold;//임계?
@@ -95,14 +95,35 @@ public class Player : MonoBehaviour
     }
     private void EvaluateInput()
     {
+        if (moveState == MoveState.RivalMatch)
+        {
+                Debug.Log("남학생 상태 확인");
+            if (attackedMale.currentState != MaleStudent.State.RivalMatch)
+            {
+                moveState = MoveState.Idle;
+                return;
+            }    
+            if (Input.GetKeyDown(KeyCode.Mouse0))
+                SendEyeLaser();
+
+            return;
+        }
+
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         RaycastHit2D prevhit = hit;
-        hit = Physics2D.Raycast(mousePos, transform.forward, 15f);
+        int layerMask = LayerMask.GetMask("maleStudent");
+        hit = Physics2D.Raycast(mousePos, transform.forward, 15f, layerMask);
 
         if (prevhit != hit)
+        {
             Focusing();
+        }
         else if(hit)
         {
+            if (attackedMale.currentState == MaleStudent.State.RivalMatch)
+            {
+                moveState = MoveState.RivalMatch;
+            }
             if(Input.GetKeyDown (KeyCode.Mouse0))
             {
                 SendEyeLaser();
@@ -130,7 +151,6 @@ public class Player : MonoBehaviour
             {
                 Move();
             }
-
         }
     }
     private void Focusing()
@@ -145,13 +165,23 @@ public class Player : MonoBehaviour
             }
             OnPlayerStopped?.Invoke();
             attackedMale = hit.transform.GetComponent<MaleStudent>();
+            
         }
         else
         {
-            InterruptedEyeLaser();
-            attackedMale = null;
-            if (moveState == MoveState.Focusing)
-                moveState = MoveState.Idle;
+                Debug.Log("남학생 상태 확인");
+            if (attackedMale.currentState == MaleStudent.State.RivalMatch)
+            {
+                moveState = MoveState.RivalMatch;
+                return;
+            } 
+            else if (attackedMale.currentState == MaleStudent.State.BeingAttacked)
+            { 
+                InterruptedEyeLaser();
+                attackedMale = null;
+                if (moveState == MoveState.Focusing)
+                    moveState = MoveState.Idle;
+            }
         }
     }
     private void FeverTime()
