@@ -31,6 +31,8 @@ public class Player : MonoBehaviour
     void Start()
     {
         moveState = MoveState.Idle;
+        MaleStudent.rivalMatch += StartRivalmatch;
+        MaleStudent.rivalMatchEnd += EndRivalMatch;
     }
 
     // Update is called once per frame
@@ -97,15 +99,8 @@ public class Player : MonoBehaviour
     {
         if (moveState == MoveState.RivalMatch)
         {
-                Debug.Log("남학생 상태 확인");
-            if (attackedMale.currentState != MaleStudent.State.RivalMatch)
-            {
-                moveState = MoveState.Idle;
-                return;
-            }    
             if (Input.GetKeyDown(KeyCode.Mouse0))
                 SendEyeLaser();
-
             return;
         }
 
@@ -169,12 +164,8 @@ public class Player : MonoBehaviour
         }
         else
         {
-                Debug.Log("남학생 상태 확인");
             if (attackedMale.currentState == MaleStudent.State.RivalMatch)
-            {
-                moveState = MoveState.RivalMatch;
                 return;
-            } 
             else if (attackedMale.currentState == MaleStudent.State.BeingAttacked)
             { 
                 InterruptedEyeLaser();
@@ -184,6 +175,12 @@ public class Player : MonoBehaviour
             }
         }
     }
+
+    private void StartRivalmatch(MaleStudent male)=>
+        moveState = MoveState.RivalMatch;
+
+    private void EndRivalMatch(bool IsSuccess)=>
+        moveState = MoveState.Idle;
     private void FeverTime()
     {
 

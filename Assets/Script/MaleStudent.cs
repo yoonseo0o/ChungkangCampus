@@ -97,7 +97,6 @@ public class MaleStudent : AI
             heartGuardGauge.value += heartGuardGauge.maxValue / (timeToBreakGauge / callTime);
             if (BreakHeartGuard())
             {
-
                 break;
             }
             // 라이벌 매치 
@@ -131,6 +130,6 @@ public class MaleStudent : AI
     }
     public int GetRivalCount()
     {
-        return rivalMatch?.GetInvocationList().Length ?? 0;
+        return rivalMatch?.GetInvocationList().Length-1 ?? 0;
     }
 }
