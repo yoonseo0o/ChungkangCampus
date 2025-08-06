@@ -20,7 +20,7 @@ public class FemaleStudent : AI
         {
             //Debug.Log("camera에 닿았다 ");
             MaleStudent.rivalMatch += Matching;
-            MaleStudent.rivalMatchEnd += MatchEnd;
+            MaleStudent.breakHeartGuard += MatchEnd;
         }
     }
     private void OnTriggerExit2D(Collider2D collision)
@@ -29,7 +29,7 @@ public class FemaleStudent : AI
         {
             //Debug.Log("camera에 닿았다 ");
             MaleStudent.rivalMatch -= Matching;
-            MaleStudent.rivalMatchEnd -= MatchEnd;
+            MaleStudent.breakHeartGuard -= MatchEnd;
         }
     }
     private void Matching(MaleStudent male)
@@ -37,12 +37,13 @@ public class FemaleStudent : AI
         Debug.Log($"{this.name}가 {male.name}한테서 라이벌 대결 중 !");
         IsMove = false;
     }
-    private void MatchEnd(bool IsSuccess)
+    private void MatchEnd(MaleStudent male)
     {
-        if(IsSuccess) Debug.Log($"{this.name}가 라이벌 대결 성공 !");
+        if(male.currentState == MaleStudent.State.OwnedByRival) 
+            Debug.Log($"{this.name}가 라이벌 대결 성공 !");
         else Debug.Log($"{this.name}가 라이벌 대결 실패 !");
         MaleStudent.rivalMatch -= Matching;
-        MaleStudent.rivalMatchEnd -= MatchEnd;
+        MaleStudent.breakHeartGuard -= MatchEnd;
         Destroy(this.gameObject);
     }
 }

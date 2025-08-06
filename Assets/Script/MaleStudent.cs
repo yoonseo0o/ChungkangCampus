@@ -7,17 +7,21 @@ using UnityEngine.UI;
 public class MaleStudent : AI
 {
     public enum State { None, BeingAttacked, RivalMatch, OwnedByPlayer, OwnedByRival }
-    public State currentState;
+    public State currentState { private set; get; }
+
+    [Header("Gameplay Setting")]
+    public int scoreValue;
+
     [Header("HeartGuard Status")]
     [SerializeField] private Slider heartGuardGauge;
     [SerializeField] private float timeToBreakGauge;
     [SerializeField] private float callTime = 0.2f; // break while
+    public static event Action<MaleStudent> breakHeartGuard;
 
     [Header("RivalMatch")]
     [SerializeField] private float rivalDelayTime;
     [SerializeField] private float rivalTimeToBreakGauge;
     public static event Action<MaleStudent> rivalMatch;
-    public static event Action<bool> rivalMatchEnd;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     protected override void Start()
@@ -71,20 +75,15 @@ public class MaleStudent : AI
         if (heartGuardGauge.value == 1)
         {
             Debug.Log($"꼬심 성공");
-            if( currentState == State.RivalMatch)
-            {
-                Debug.Log("남학생 상태 확인");
-
-                rivalMatchEnd?.Invoke(false);
-            }
             currentState = State.OwnedByPlayer;
+            breakHeartGuard?.Invoke(this);
             ReceiveInterruptedEyeLaser();
         }
         else if (heartGuardGauge.value == 0)
         {
             Debug.Log($"꼬심 실패");
             currentState = State.OwnedByRival;
-            rivalMatchEnd?.Invoke(true);
+            breakHeartGuard?.Invoke(this);
         }
         Destroy(this.gameObject);
         return true;
@@ -115,8 +114,7 @@ public class MaleStudent : AI
     private IEnumerator RivalMatch()
     {
         rivalMatch?.Invoke(this);
-        currentState = State.RivalMatch;
-        // 플레이어 움직임 멈춤
+        currentState = State.RivalMatch; 
         while (currentState == State.RivalMatch)
         {
             //Debug.Log($"{rivalMatchCount}명의 라이벌 매치 중..");
@@ -125,11 +123,11 @@ public class MaleStudent : AI
             if (BreakHeartGuard())
                 break;
             yield return new WaitForSeconds(callTime);
-        }
-        // 플레이어 움직이기 시작
+        } 
     }
     public int GetRivalCount()
     {
-        return rivalMatch?.GetInvocationList().Length-1 ?? 0;
+        // player, gameManager
+        return rivalMatch?.GetInvocationList().Length-2 ?? 0;
     }
 }

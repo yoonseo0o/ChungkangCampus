@@ -32,7 +32,7 @@ public class Player : MonoBehaviour
     {
         moveState = MoveState.Idle;
         MaleStudent.rivalMatch += StartRivalmatch;
-        MaleStudent.rivalMatchEnd += EndRivalMatch;
+        MaleStudent.breakHeartGuard += EndRivalMatch;
     }
 
     // Update is called once per frame
@@ -179,7 +179,7 @@ public class Player : MonoBehaviour
     private void StartRivalmatch(MaleStudent male)=>
         moveState = MoveState.RivalMatch;
 
-    private void EndRivalMatch(bool IsSuccess)=>
+    private void EndRivalMatch(MaleStudent male) =>
         moveState = MoveState.Idle;
     private void FeverTime()
     {
