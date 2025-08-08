@@ -15,6 +15,9 @@ public class Player : MonoBehaviour
     bool isMask;
     enum MoveState { Idle, Walk, Run, Focusing, RivalMatch }
     [SerializeField] private MoveState moveState;
+    enum WallState { Left, Right, None }
+    [SerializeField] private WallState wallState;
+    private float wallDistanceValue;
     [Header("ControlParameters")]
     [SerializeField] private float mouseXThreshold;//юс╟Х?
     [SerializeField] private float walkSpeed;
@@ -31,8 +34,11 @@ public class Player : MonoBehaviour
     void Start()
     {
         moveState = MoveState.Idle;
+        wallState = WallState.None;
         MaleStudent.rivalMatch += StartRivalmatch;
         MaleStudent.breakHeartGuard += EndRivalMatch;
+        wallDistanceValue = transform.GetComponent<BoxCollider2D>().size.x / 2;
+
     }
 
     // Update is called once per frame
@@ -44,7 +50,7 @@ public class Player : MonoBehaviour
     }
     private void Move()
     {
-        switch(moveState)
+        switch (moveState)
         {
             case MoveState.Focusing:
                 break;
@@ -73,9 +79,35 @@ public class Player : MonoBehaviour
         OnPlayerMoved?.Invoke(vec);
         while (true)
         {
+            if (wallState == WallState.None)
+            {
+
+                RaycastHit2D rightHit = Physics2D.Raycast(transform.position, Vector3.right, wallDistanceValue, LayerMask.GetMask("wall"));
+                RaycastHit2D leftHit = Physics2D.Raycast(transform.position, Vector3.left, wallDistanceValue, LayerMask.GetMask("wall"));
+                if (rightHit || leftHit)
+                {
+                    wallState = rightHit ? WallState.Right :WallState.Left;
+                    moveVec = Vector2.zero;
+                    OnPlayerStopped?.Invoke();
+                    break;
+                }
+            }
+            else
+            {
+
+                if ((wallState == WallState.Right && moveVec == Vector2.right) ||
+                (wallState == WallState.Left && moveVec == Vector2.left))
+                {
+                    break;
+                }
+                wallState = WallState.None;
+
+            }
+
             transform.Translate(vec * Time.deltaTime);
             yield return null;
         }
+        moveCo = null;
     }
     private void SendEyeLaser()
     {

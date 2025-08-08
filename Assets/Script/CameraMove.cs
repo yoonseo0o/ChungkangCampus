@@ -1,14 +1,19 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 public class CameraMove : MonoBehaviour
 {
-    public enum DirectionState { Left, Right, None }
     [SerializeField] private float moveSpeed;
     [SerializeField] private Transform target;
     [SerializeField] private float targetOffsetX;
+    public enum DirectionState { Left, None, Right }
     [SerializeField] private DirectionState currentState;
+
+    // wall 
+    private enum WallState { Left, None, Right }
+    [SerializeField] private WallState wallState; 
     private Coroutine moveCo;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -16,6 +21,7 @@ public class CameraMove : MonoBehaviour
         Player.OnPlayerMoved += Move;
         Player.OnPlayerStopped += StopFollowTarget;
         currentState = DirectionState.None;
+        wallState = WallState.None;// 
     }
 
     // Update is called once per frame
@@ -25,7 +31,8 @@ public class CameraMove : MonoBehaviour
     }
     public void Move(Vector2 vec)
     {
-        DirectionState state = vec.x>0? DirectionState.Left: DirectionState.Right;
+
+        DirectionState state = vec.x>0? DirectionState.Left: DirectionState.Right; 
         if (currentState == state)
         {
             return;
@@ -40,7 +47,7 @@ public class CameraMove : MonoBehaviour
         moveCo = StartCoroutine(FollowTarget());
     }
     private IEnumerator FollowTarget()
-    {
+    { 
         Vector3 targetVec = new Vector3(
             currentState == DirectionState.Left ?
             target.position.x + targetOffsetX : target.position.x - targetOffsetX,
@@ -48,18 +55,38 @@ public class CameraMove : MonoBehaviour
 
         while (true)
         {
+            if (wallState == WallState.None)
+            {
+                RaycastHit2D rightHit = Physics2D.Raycast(transform.position, Vector3.right, targetOffsetX, LayerMask.GetMask("wall"));
+                RaycastHit2D leftHit = Physics2D.Raycast(transform.position, Vector3.left, targetOffsetX, LayerMask.GetMask("wall"));
+                if (rightHit || leftHit)
+                {
+                    wallState = rightHit ? WallState.Right : WallState.Left;
+                    currentState = DirectionState.None;
+                    break;
+                }
+            }
+            else
+            { 
+                if ((wallState == WallState.Right && currentState == DirectionState.Left) ||
+                (wallState == WallState.Left && currentState == DirectionState.Right))
+                {
+                    break;
+                }
+                wallState = WallState.None;
+
+            }
             targetVec = new Vector3(
                 currentState == DirectionState.Left ? 
                 target.position.x + targetOffsetX : target.position.x - targetOffsetX,
                 transform.position.y, transform.position.z); 
             transform.position = Vector3.MoveTowards(transform.position, targetVec, moveSpeed*Time.deltaTime); 
             yield return null;
-        }
-        /*Debug.Log("목표 위치 도착 완료");
-        moveCo = null;*/
+        } 
+        moveCo = null;
     }
     private void StopFollowTarget()
-    {
+    { 
         if (moveCo != null) 
         { 
             StopCoroutine(moveCo); 
@@ -67,5 +94,5 @@ public class CameraMove : MonoBehaviour
         }
 
         currentState = DirectionState.None;
-    }
+    } 
 }

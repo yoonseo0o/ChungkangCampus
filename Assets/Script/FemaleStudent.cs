@@ -20,7 +20,6 @@ public class FemaleStudent : AI
         {
             //Debug.Log("camera에 닿았다 ");
             MaleStudent.rivalMatch += Matching;
-            MaleStudent.breakHeartGuard += MatchEnd;
         }
     }
     private void OnTriggerExit2D(Collider2D collision)
@@ -36,6 +35,7 @@ public class FemaleStudent : AI
     {
         Debug.Log($"{this.name}가 {male.name}한테서 라이벌 대결 중 !");
         IsMove = false;
+        MaleStudent.breakHeartGuard += MatchEnd;
     }
     private void MatchEnd(MaleStudent male)
     {
