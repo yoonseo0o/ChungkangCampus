@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,8 +10,14 @@ public class MaleStudent : AI
     public enum State { None, BeingAttacked, RivalMatch, OwnedByPlayer, OwnedByRival }
     public State currentState { private set; get; }
 
+    public enum Type { none, mob, professor, named }
+    [SerializeField] public Type type { get; protected set; }
     [Header("Gameplay Setting")]
     public int scoreValue;
+    [SerializeField]
+    private float manaCostNomal;
+    [SerializeField]
+    private float manaCostRival;
 
     [Header("HeartGuard Status")]
     [SerializeField] private Slider heartGuardGauge;
@@ -23,9 +30,14 @@ public class MaleStudent : AI
     [SerializeField] private float rivalTimeToBreakGauge;
     public static event Action<MaleStudent> rivalMatch;
 
+
+    [Header("Following")]
+    public Transform followTarget;
+    [SerializeField] private float followDistance;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     protected override void Start()
-    { 
+    {
+        type = Type.mob;
         base.debugLineColor = GetComponent<SpriteRenderer>().color;
         base.Start();
         currentState = State.None;
@@ -34,8 +46,10 @@ public class MaleStudent : AI
     // Update is called once per frame
     protected override void Update()
     {
-        if(currentState != State.OwnedByPlayer)
+        if (currentState != State.OwnedByPlayer)
             base.Update();
+        else
+            FollowingTarget();
     }
     public void ReceiveEyeLaser()
     {
@@ -52,6 +66,8 @@ public class MaleStudent : AI
                 break;
             case State.RivalMatch:
                 Debug.Log("라이벌 공격");
+                if (!GameManager.Instance.ManaManager.ManaDecrease(manaCostRival))
+                    break;
                 heartGuardGauge.value += heartGuardGauge.maxValue / (timeToBreakGauge / callTime);
                 BreakHeartGuard(); 
                 break;
@@ -84,16 +100,19 @@ public class MaleStudent : AI
             Debug.Log($"꼬심 실패");
             currentState = State.OwnedByRival;
             breakHeartGuard?.Invoke(this);
+            Destroy(this.gameObject);
         }
-        Destroy(this.gameObject);
         return true;
     }
     private IEnumerator EyeLaserAttacked()
     {
         float currentTime = 0;
+        float breakTime = timeToBreakGauge / callTime;
         while (currentState==State.BeingAttacked)
         {
-            heartGuardGauge.value += heartGuardGauge.maxValue / (timeToBreakGauge / callTime);
+            if (!GameManager.Instance.ManaManager.ManaDecrease(manaCostNomal / breakTime))
+                break;
+            heartGuardGauge.value += heartGuardGauge.maxValue / breakTime;
             if (BreakHeartGuard())
             {
                 break;
@@ -129,5 +148,11 @@ public class MaleStudent : AI
     {
         // player, gameManager
         return rivalMatch?.GetInvocationList().Length-2 ?? 0;
+    }
+    private void FollowingTarget()
+    {
+        // 거리 조절
+        
+        transform.position = Vector3.MoveTowards(transform.position, followTarget.position, moveSpeed * Time.deltaTime);
     }
 }

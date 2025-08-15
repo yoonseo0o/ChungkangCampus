@@ -5,6 +5,7 @@ public class UIManger : MonoBehaviour
 {
     [SerializeField] private Slider timer;
     [SerializeField] private TMP_Text score;
+    [SerializeField] private Transform manaList;
     public void SetTimerUI(float value)
     {
         timer.value = value;
@@ -15,5 +16,18 @@ public class UIManger : MonoBehaviour
         // D8 : Decimal 형식(D)으로 8자리 - 부족한 자릿수는 왼쪽에 0을 채움
         score.text = value.ToString("D8");
 
+    }
+    public void SetMana(float value)
+    { 
+        int childCount = manaList.childCount;
+        float usedMana = childCount - value;
+        int ceilUsedMana = Mathf.CeilToInt(usedMana);
+        for (int i = 0; i < ceilUsedMana; i++) 
+        { 
+            if (usedMana - i < 1f)
+                manaList.GetChild(childCount - 1-i).GetComponent<Image>().fillAmount = 1 - (usedMana - i); 
+            else
+                manaList.GetChild(childCount - 1 - i).gameObject.SetActive(false);
+        }
     }
 }

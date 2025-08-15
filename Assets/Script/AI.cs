@@ -5,7 +5,7 @@ public class AI : MonoBehaviour
 {
     [Header("MoveStatus")]
     [SerializeField] private float movementRange;
-    [SerializeField] private float moveSpeed;
+    [SerializeField] protected float moveSpeed;
     [SerializeField] private float moveDistance;
     [SerializeField] protected bool IsMove;
 

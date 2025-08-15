@@ -374,11 +374,15 @@ MonoBehaviour:
   moveDistance: 0
   IsMove: 0
   scoreValue: 2000
+  manaCostNomal: 0.5
+  manaCostRival: 0.04
   heartGuardGauge: {fileID: 1619057103923902077}
   timeToBreakGauge: 2
   callTime: 0.2
   rivalDelayTime: 0.5
   rivalTimeToBreakGauge: 20
+  followTarget: {fileID: 0}
+  followDistance: 0
 --- !u!61 &4028355634140201231
 BoxCollider2D:
   m_ObjectHideFlags: 0

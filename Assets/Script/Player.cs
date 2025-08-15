@@ -10,7 +10,9 @@ using UnityEngine.Rendering;
 public class Player : MonoBehaviour
 {
     [Header("ResourceConfig")]
-    float mana;
+    [SerializeField] private float maxMana;
+    private float mana;
+    [SerializeField] private float decreaseMana; // 한명 꼬실때?
     [Header("StatusFlags")]
     bool isMask;
     enum MoveState { Idle, Walk, Run, Focusing, RivalMatch }
@@ -30,6 +32,7 @@ public class Player : MonoBehaviour
     public static event Action OnPlayerStopped;
     // attack male
     private MaleStudent attackedMale;
+    private FollowerManager followingManager;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -38,7 +41,7 @@ public class Player : MonoBehaviour
         MaleStudent.rivalMatch += StartRivalmatch;
         MaleStudent.breakHeartGuard += EndRivalMatch;
         wallDistanceValue = transform.GetComponent<BoxCollider2D>().size.x / 2;
-
+        mana = maxMana;
     }
 
     // Update is called once per frame
@@ -116,6 +119,7 @@ public class Player : MonoBehaviour
             Debug.Log("attackedMale is null");
             return;
         }
+        mana -= decreaseMana;
         attackedMale.ReceiveEyeLaser();
     }
     private void InterruptedEyeLaser()
@@ -211,8 +215,13 @@ public class Player : MonoBehaviour
     private void StartRivalmatch(MaleStudent male)=>
         moveState = MoveState.RivalMatch;
 
-    private void EndRivalMatch(MaleStudent male) =>
+    private void EndRivalMatch(MaleStudent male)
+    {
         moveState = MoveState.Idle;
+        // 꼬심에 성공했는지 확인 하고 추가해야 함
+        //followingManager.AddFollower(male);
+
+    }
     private void FeverTime()
     {
 

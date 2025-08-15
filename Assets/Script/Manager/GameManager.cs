@@ -36,6 +36,7 @@ public class GameManager : MonoBehaviour
     }
     [Header("Manager")]
     public UIManger UIManger;
+    public ManaManager ManaManager;
     private static GameManager instance;
     public static GameManager Instance { get { return instance; } }
     void Awake()
