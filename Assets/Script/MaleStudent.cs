@@ -21,7 +21,7 @@ public class MaleStudent : AI
 
     [Header("HeartGuard Status")]
     [SerializeField] private Slider heartGuardGauge;
-    [SerializeField] private float timeToBreakGauge;
+    public static float timeToBreakGauge = 2;
     [SerializeField] private float callTime = 0.2f; // break while
     public static event Action<MaleStudent> breakHeartGuard;
 
@@ -66,7 +66,7 @@ public class MaleStudent : AI
                 break;
             case State.RivalMatch:
                 Debug.Log("¶óÀÌ¹ú °ø°Ý");
-                if (!GameManager.Instance.ManaManager.ManaDecrease(manaCostRival))
+                if (!GameManager.Instance.ManaManager.ManaIncrease(-manaCostRival))
                     break;
                 heartGuardGauge.value += heartGuardGauge.maxValue / (timeToBreakGauge / callTime);
                 BreakHeartGuard(); 
@@ -94,6 +94,7 @@ public class MaleStudent : AI
             currentState = State.OwnedByPlayer;
             breakHeartGuard?.Invoke(this);
             ReceiveInterruptedEyeLaser();
+            transform.GetComponent<BoxCollider2D >().enabled = false;
         }
         else if (heartGuardGauge.value == 0)
         {
@@ -108,9 +109,11 @@ public class MaleStudent : AI
     {
         float currentTime = 0;
         float breakTime = timeToBreakGauge / callTime;
+        Debug.Log($"{timeToBreakGauge} / {callTime} = {breakTime}");
         while (currentState==State.BeingAttacked)
         {
-            if (!GameManager.Instance.ManaManager.ManaDecrease(manaCostNomal / breakTime))
+            Debug.Log($"{-manaCostNomal} / {breakTime} = {-manaCostNomal / breakTime}");
+            if (!GameManager.Instance.ManaManager.ManaIncrease(-manaCostNomal / breakTime))
                 break;
             heartGuardGauge.value += heartGuardGauge.maxValue / breakTime;
             if (BreakHeartGuard())

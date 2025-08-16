@@ -6,6 +6,7 @@ public class UIManger : MonoBehaviour
     [SerializeField] private Slider timer;
     [SerializeField] private TMP_Text score;
     [SerializeField] private Transform manaList;
+    [SerializeField] private Slider feverTimeGauge;
     public void SetTimerUI(float value)
     {
         timer.value = value;
@@ -29,5 +30,14 @@ public class UIManger : MonoBehaviour
             else
                 manaList.GetChild(childCount - 1 - i).gameObject.SetActive(false);
         }
+    }
+    public void SetActiveFeverGauge(bool value)
+    {
+        feverTimeGauge.gameObject.SetActive(value);
+        feverTimeGauge.value = 1;
+    }
+    public void SetValueFeverGauge(float value)
+    {
+        feverTimeGauge.value = value;
     }
 }
