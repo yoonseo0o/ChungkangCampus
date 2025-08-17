@@ -34,9 +34,11 @@ public class GameManager : MonoBehaviour
             return _score;
         }
     }
+    public Player player;
     [Header("Manager")]
     public UIManger UIManger;
     public ManaManager ManaManager;
+    public FloorManager FloorManager;
     private static GameManager instance;
     public static GameManager Instance { get { return instance; } }
     void Awake()

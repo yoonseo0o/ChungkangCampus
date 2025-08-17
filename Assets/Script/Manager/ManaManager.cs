@@ -42,7 +42,6 @@ public class ManaManager : MonoBehaviour
         }
         else if ( mana >= maxMana)
         {
-            Debug.Log($"Fever Time 시작 현재 마나 : {mana}");
             StartCoroutine(FeverTime());
         } 
         return true;
@@ -58,7 +57,6 @@ public class ManaManager : MonoBehaviour
         {
             curTime -= Time.deltaTime;
             GameManager.Instance.UIManger.SetValueFeverGauge(curTime/feverTimeDuration); 
-            Debug.Log("Fever Time 중");
             yield return null;
         }
         MaleStudent.timeToBreakGauge /= decreaseRate; 

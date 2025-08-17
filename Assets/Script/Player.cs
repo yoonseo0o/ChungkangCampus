@@ -33,9 +33,15 @@ public class Player : MonoBehaviour
     // attack male
     private MaleStudent attackedMale;
     private FollowerManager followingManager;
+
+    [SerializeField] private Animator animator;
+    [SerializeField] private SpriteRenderer spriteRenderer;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        animator = transform.GetComponent<Animator>();
+        spriteRenderer = transform.GetComponent<SpriteRenderer>();
         moveState = MoveState.Idle;
         wallState = WallState.None;
         MaleStudent.rivalMatch += StartRivalmatch;
@@ -53,11 +59,12 @@ public class Player : MonoBehaviour
     }
     private void Move()
     {
-        switch (moveState)
+            switch (moveState)
         {
             case MoveState.Focusing:
                 break;
             case MoveState.Idle:
+        animator.SetFloat("anim", 0);
                 if (moveCo != null)
                 {
                     StopCoroutine(moveCo);
@@ -65,11 +72,13 @@ public class Player : MonoBehaviour
                 }
                 break;
             case MoveState.Walk:
+                animator.SetFloat("anim", 0.5f);
                 if (moveCo != null)
                     StopCoroutine(moveCo);
                 moveCo = StartCoroutine(WalkCo(moveVec * walkSpeed));
                 break;
             case MoveState.Run: 
+                animator.SetFloat("anim", 1f);
                 if (moveCo != null)
                     StopCoroutine(moveCo);
                 moveCo = StartCoroutine(WalkCo(moveVec * runSpeed));
@@ -92,21 +101,27 @@ public class Player : MonoBehaviour
                     wallState = rightHit ? WallState.Right :WallState.Left;
                     moveVec = Vector2.zero;
                     OnPlayerStopped?.Invoke();
+                    GameManager.Instance.UIManger.SetActiveFloorButton(true);
                     break;
                 }
             }
             else
             {
 
+                animator.SetFloat("anim", 0);
                 if ((wallState == WallState.Right && moveVec == Vector2.right) ||
                 (wallState == WallState.Left && moveVec == Vector2.left))
                 {
                     break;
                 }
+                GameManager.Instance.UIManger.SetActiveFloorButton(false);
                 wallState = WallState.None;
 
             }
-
+            if(moveVec == Vector2.left) 
+                spriteRenderer.flipX = false; 
+            else
+                spriteRenderer.flipX = true;
             transform.Translate(vec * Time.deltaTime);
             yield return null;
         }
@@ -220,10 +235,6 @@ public class Player : MonoBehaviour
         moveState = MoveState.Idle;
         // 꼬심에 성공했는지 확인 하고 추가해야 함
         //followingManager.AddFollower(male);
-
-    }
-    private void FeverTime()
-    {
 
     }
     public void ReceiveShoulderBump()

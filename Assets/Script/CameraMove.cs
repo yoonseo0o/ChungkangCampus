@@ -51,8 +51,8 @@ public class CameraMove : MonoBehaviour
         Vector3 targetVec = new Vector3(
             currentState == DirectionState.Left ?
             target.position.x + targetOffsetX : target.position.x - targetOffsetX,
-            target.position.y, transform.position.z);
-
+            transform.position.y, transform.position.z);
+         
         while (true)
         {
             if (wallState == WallState.None)
