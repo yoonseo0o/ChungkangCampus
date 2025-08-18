@@ -50,8 +50,13 @@ public class GameManager : MonoBehaviour
     }
     private void Start()
     {
-        Debug.Log("Start()");
+        //Debug.Log("Start()");
         Init();
+        Time.timeScale = 0f;
+    }
+    public void GameStart()
+    {
+        Time.timeScale = 1.0f;
         StartCoroutine(Timer());
     }
     void Update()

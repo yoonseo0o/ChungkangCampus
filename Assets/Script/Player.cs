@@ -15,7 +15,7 @@ public class Player : MonoBehaviour
     [SerializeField] private float decreaseMana; // 한명 꼬실때?
     [Header("StatusFlags")]
     bool isMask;
-    enum MoveState { Idle, Walk, Run, Focusing, RivalMatch }
+    enum MoveState { Idle, Walk, Run, Focusing, RivalMatch, ShoulderBump }
     [SerializeField] private MoveState moveState;
     enum WallState { Left, Right, None }
     [SerializeField] private WallState wallState;
@@ -27,13 +27,15 @@ public class Player : MonoBehaviour
     Vector2 moveVec;
     RaycastHit2D hit;
     Coroutine moveCo;
-
     public static event Action<Vector2> OnPlayerMoved;
     public static event Action OnPlayerStopped;
+
+
     // attack male
     private MaleStudent attackedMale;
     private FollowerManager followingManager;
 
+    [Header("Animation")]
     [SerializeField] private Animator animator;
     [SerializeField] private SpriteRenderer spriteRenderer;
 
@@ -63,8 +65,9 @@ public class Player : MonoBehaviour
         {
             case MoveState.Focusing:
                 break;
+            case MoveState.ShoulderBump:
             case MoveState.Idle:
-        animator.SetFloat("anim", 0);
+                animator.SetFloat("anim", 0);
                 if (moveCo != null)
                 {
                     StopCoroutine(moveCo);
@@ -154,7 +157,11 @@ public class Player : MonoBehaviour
                 SendEyeLaser();
             return;
         }
-
+        else if(moveState == MoveState.ShoulderBump)
+        {
+            Move();
+            return;
+        }
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         RaycastHit2D prevhit = hit;
         int layerMask = LayerMask.GetMask("maleStudent");
@@ -237,9 +244,18 @@ public class Player : MonoBehaviour
         //followingManager.AddFollower(male);
 
     }
-    public void ReceiveShoulderBump()
+    public void ReceiveShoulderBump(float delayTime)
     {
-
+        if (moveState == MoveState.ShoulderBump)
+            return;
+        Debug.Log("어깨빵 맞음");
+        moveState = MoveState.ShoulderBump;
+        // 애니메이션 재생
+        Invoke("asdf", delayTime);
+    }
+    private void asdf()
+    {
+        moveState = MoveState.Idle;
     }
     public void EquipMask()
     {

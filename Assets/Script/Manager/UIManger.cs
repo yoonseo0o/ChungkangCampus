@@ -21,12 +21,14 @@ public class UIManger : MonoBehaviour
 
     }
     public void SetMana(float value)
-    { 
+    {
         int childCount = manaList.childCount;
         float usedMana = childCount - value;
         int ceilUsedMana = Mathf.CeilToInt(usedMana);
-        for (int i = 0; i < ceilUsedMana; i++) 
-        { 
+        for (int i = 0; i < ceilUsedMana; i++)
+        {
+            if (childCount - 1 - i < 0)
+                return;
             if (usedMana - i < 1f)
                 manaList.GetChild(childCount - 1-i).GetComponent<Image>().fillAmount = 1 - (usedMana - i); 
             else

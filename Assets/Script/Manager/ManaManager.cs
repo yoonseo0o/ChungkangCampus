@@ -16,7 +16,6 @@ public class ManaManager : MonoBehaviour
     {
         mana = maxMana;
         IsFeverTime = false;
-        StartCoroutine(FeverTime());
     }
     public bool ManaIncrease(float amount)
     {
@@ -30,6 +29,8 @@ public class ManaManager : MonoBehaviour
         {
             if (mana + amount > maxMana)
                 mana = maxMana;
+            else if (mana + amount < 0)
+                mana = 0;
             else
                 mana += amount;
         }

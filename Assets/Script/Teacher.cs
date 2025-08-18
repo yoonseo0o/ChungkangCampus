@@ -2,6 +2,9 @@ using UnityEngine;
 
 public class Teacher : AI
 {
+    [Header("ShoulderBump")]
+    [SerializeField] private float delayTimeShoulderBump;
+    [SerializeField] private float manaAmount;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     protected override void Start()
     {
@@ -13,5 +16,14 @@ public class Teacher : AI
     protected override void Update()
     {
         base.Update();
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        
+        if (collision.CompareTag("Player"))
+        {
+            GameManager.Instance.ManaManager.ManaIncrease(manaAmount);
+            GameManager.Instance.player.ReceiveShoulderBump(delayTimeShoulderBump);
+        }
     }
 }

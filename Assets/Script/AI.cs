@@ -13,8 +13,16 @@ public class AI : MonoBehaviour
 
     Coroutine co;
     protected Color debugLineColor;
+
+    [Header("Animation")]
+    [SerializeField] private Animator animator;
+    [SerializeField] private SpriteRenderer spriteRenderer;
+
     protected virtual void Start()
     {
+        animator = transform.GetComponent<Animator>();
+        spriteRenderer = transform.GetComponent<SpriteRenderer>();
+
         IsMove = true;
         pivotPoint = transform.position;
     }
@@ -53,6 +61,16 @@ public class AI : MonoBehaviour
         while (count > 0 && IsMove)
         {
             //Debug.DrawLine(trfVec + Vector3.up/2, trfVec + direction * Vector3.right * walkDistance + Vector3.up / 2, Color.blue); 
+            if(direction ==0)
+                animator.SetFloat("anim", 0);
+            else
+            {
+                animator.SetFloat("anim", 1);
+                if(direction <0)
+                    spriteRenderer.flipX = false;
+                else
+                    spriteRenderer.flipX = true;
+            }
             transform.Translate(direction * moveSpeed * Time.deltaTime, 0, 0);
             count -= moveSpeed * Time.deltaTime;
             yield return null;
