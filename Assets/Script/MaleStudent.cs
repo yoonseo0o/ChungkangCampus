@@ -26,6 +26,11 @@ public class MaleStudent : AI
     [SerializeField] private float callTime = 0.2f; // break while
     public static event Action<MaleStudent> breakHeartGuard;
 
+
+
+    [Header("RivalMatch")]
+    [SerializeField] private GameObject focusCursor;
+
     [Header("RivalMatch")]
     [SerializeField] private float rivalDelayTime;
     [SerializeField] private float rivalTimeToBreakGauge;
@@ -54,6 +59,10 @@ public class MaleStudent : AI
             base.Update();
         else
             FollowingTarget();
+    }
+    public void ReceiveFocus(bool IsOn)
+    {
+        focusCursor.SetActive(IsOn);
     }
     public void ReceiveEyeLaser()
     {
@@ -125,12 +134,12 @@ public class MaleStudent : AI
         { 
             if (!GameManager.Instance.ManaManager.ManaIncrease(-manaCostNomal / breakTime))
                 break;
-            Debug.Log($"gauge : {useGauge.value} | {(useGauge==RivalGauge)}");
             useGauge.value += useGauge.maxValue / breakTime;
             if (BreakHeartGuard())
             {
                 break;
             }
+            Debug.Log($"대기 중인 라이벌 수 : {GetRivalCount()}");
             // 라이벌 매치 
             if(GetRivalCount() > 0)
             {
@@ -169,8 +178,8 @@ public class MaleStudent : AI
     }
     public int GetRivalCount()
     {
-        // player, gameManager
-        return rivalMatch?.GetInvocationList().Length-2 ?? 0;
+        // player
+        return rivalMatch?.GetInvocationList().Length-1 ?? 0;
     }
     private void FollowingTarget()
     {

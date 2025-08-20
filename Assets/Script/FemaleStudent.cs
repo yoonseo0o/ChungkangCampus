@@ -1,8 +1,10 @@
+using System.Collections;
 using UnityEngine;
 
 public class FemaleStudent : AI
 {
     [SerializeField] private EyeLaser eyeLaser;
+    [SerializeField] private GameObject surpriseImg;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     protected override void Start()
     {
@@ -19,7 +21,7 @@ public class FemaleStudent : AI
     {
         if(collision.CompareTag("MainCamera"))
         {
-            //Debug.Log("camera¿¡ ´ê¾Ò´Ù ");
+             Debug.Log("camera¿¡ ´ê¾Ò´Ù OnTriggerEnter2D");
             MaleStudent.rivalMatch += Matching;
         }
     }
@@ -27,13 +29,14 @@ public class FemaleStudent : AI
     {
         if (collision.CompareTag("MainCamera"))
         {
-            //Debug.Log("camera¿¡ ´ê¾Ò´Ù ");
+            Debug.Log("camera¿¡ ´ê¾Ò´Ù OnTriggerExit2D");
             MaleStudent.rivalMatch -= Matching;
             MaleStudent.breakHeartGuard -= MatchEnd;
         }
     }
     private void Matching(MaleStudent male)
     {
+        MatchStartAnim();
         Debug.Log($"{this.name}°¡ {male.name}ÇÑÅ×¼­ ¶óÀÌ¹ú ´ë°á Áß !");
         IsMove = false;
         MaleStudent.breakHeartGuard += MatchEnd;
@@ -59,5 +62,20 @@ public class FemaleStudent : AI
         MaleStudent.breakHeartGuard -= MatchEnd;
         eyeLaser.EyeLaserOn(false);
         Destroy(this.gameObject);
+    }
+    private void MatchStartAnim()
+    {
+        StartCoroutine(MatchAnim());
+    }
+    private IEnumerator MatchAnim()
+    {
+        surpriseImg.SetActive(true);
+        yield return null;
+        surpriseImg.SetActive(false);
+        yield return null;
+        surpriseImg.SetActive(true);
+        yield return null;
+        surpriseImg.SetActive(false);
+        yield return null;
     }
 }

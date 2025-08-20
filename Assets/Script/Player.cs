@@ -233,10 +233,11 @@ public class Player : MonoBehaviour
             }
             OnPlayerStopped?.Invoke();
             attackedMale = hit.transform.GetComponent<MaleStudent>();
-            
+            attackedMale.ReceiveFocus (true);
         }
         else
         {
+            attackedMale.ReceiveFocus(false);
             if (attackedMale.currentState == MaleStudent.State.RivalMatch)
                 return;
             else if (attackedMale.currentState == MaleStudent.State.BeingAttacked)
