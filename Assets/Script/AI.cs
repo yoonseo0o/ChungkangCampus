@@ -16,7 +16,7 @@ public class AI : MonoBehaviour
 
     [Header("Animation")]
     [SerializeField] private Animator animator;
-    [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] protected SpriteRenderer spriteRenderer;
 
     protected virtual void Start()
     {
@@ -30,7 +30,15 @@ public class AI : MonoBehaviour
     {
         if (IsMove)
             Move();
-
+        else
+        {
+            if (co != null)
+            {
+                StopCoroutine(co);
+                co = null;
+                animator.SetFloat("anim", 0);
+            }
+        }
         Debug.DrawLine(pivotPoint - Vector3.right * movementRange,
             pivotPoint + Vector3.right * movementRange, debugLineColor);
     }

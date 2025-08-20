@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class FemaleStudent : AI
 {
+    [SerializeField] private EyeLaser eyeLaser;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     protected override void Start()
     {
@@ -36,6 +37,18 @@ public class FemaleStudent : AI
         Debug.Log($"{this.name}가 {male.name}한테서 라이벌 대결 중 !");
         IsMove = false;
         MaleStudent.breakHeartGuard += MatchEnd;
+        //flip idle
+        if(male.transform.position.x - transform.position.x > 0)
+        {
+            base.spriteRenderer.flipX = true;
+            eyeLaser.transform.rotation = Quaternion.Euler(0, 180, 0);
+        }
+        else
+        {
+            base.spriteRenderer.flipX = false;
+            eyeLaser.transform.rotation = Quaternion.Euler(0, 0, 0);
+        } 
+        eyeLaser.EyeLaserOn(true);
     }
     private void MatchEnd(MaleStudent male)
     {
@@ -44,6 +57,7 @@ public class FemaleStudent : AI
         else Debug.Log($"{this.name}가 라이벌 대결 실패 !");
         MaleStudent.rivalMatch -= Matching;
         MaleStudent.breakHeartGuard -= MatchEnd;
+        eyeLaser.EyeLaserOn(false);
         Destroy(this.gameObject);
     }
 }

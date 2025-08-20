@@ -35,10 +35,10 @@ public class Player : MonoBehaviour
     private MaleStudent attackedMale;
     private FollowerManager followingManager;
 
-    [Header("Animation")]
+    [Header("Graphic")]
     [SerializeField] private Animator animator;
     [SerializeField] private SpriteRenderer spriteRenderer;
-
+    [SerializeField] private EyeLaser eyeLaser; 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -47,7 +47,7 @@ public class Player : MonoBehaviour
         moveState = MoveState.Idle;
         wallState = WallState.None;
         MaleStudent.rivalMatch += StartRivalmatch;
-        MaleStudent.breakHeartGuard += EndRivalMatch;
+        MaleStudent.breakHeartGuard += EndMaleAttack;
         wallDistanceValue = transform.GetComponent<BoxCollider2D>().size.x / 2;
         mana = maxMana;
     }
@@ -63,8 +63,7 @@ public class Player : MonoBehaviour
     {
             switch (moveState)
         {
-            case MoveState.Focusing:
-                break;
+            case MoveState.Focusing: 
             case MoveState.ShoulderBump:
             case MoveState.Idle:
                 animator.SetFloat("anim", 0);
@@ -121,10 +120,15 @@ public class Player : MonoBehaviour
                 wallState = WallState.None;
 
             }
-            if(moveVec == Vector2.left) 
-                spriteRenderer.flipX = false; 
+            if(moveVec == Vector2.left)
+            {
+                spriteRenderer.flipX = false;
+            }
             else
-                spriteRenderer.flipX = true;
+            {
+                spriteRenderer.flipX = true; 
+
+            }
             transform.Translate(vec * Time.deltaTime);
             yield return null;
         }
@@ -138,6 +142,7 @@ public class Player : MonoBehaviour
             return;
         }
         mana -= decreaseMana;
+        eyeLaser.EyeLaserOn(true);
         attackedMale.ReceiveEyeLaser();
     }
     private void InterruptedEyeLaser()
@@ -147,6 +152,7 @@ public class Player : MonoBehaviour
             Debug.Log("attackedMale is null");
             return;
         }
+        eyeLaser.EyeLaserOn(false);
         attackedMale.ReceiveInterruptedEyeLaser();
     }
     private void EvaluateInput()
@@ -211,10 +217,19 @@ public class Player : MonoBehaviour
         if (hit)
         {
             moveState = MoveState.Focusing;
+            animator.SetFloat("anim", 0.2f);
             if (moveCo != null)
             {
                 StopCoroutine(moveCo);
                 moveCo = null;
+            }
+            if (moveVec == Vector2.left)
+            { 
+                eyeLaser.transform.rotation = Quaternion.Euler(0,0,0);
+            }
+            else
+            {
+                eyeLaser.transform.rotation = Quaternion.Euler(0, 180, 0);
             }
             OnPlayerStopped?.Invoke();
             attackedMale = hit.transform.GetComponent<MaleStudent>();
@@ -237,9 +252,10 @@ public class Player : MonoBehaviour
     private void StartRivalmatch(MaleStudent male)=>
         moveState = MoveState.RivalMatch;
 
-    private void EndRivalMatch(MaleStudent male)
+    private void EndMaleAttack(MaleStudent male)
     {
         moveState = MoveState.Idle;
+        eyeLaser.EyeLaserOn(false);
         // 꼬심에 성공했는지 확인 하고 추가해야 함
         //followingManager.AddFollower(male);
 

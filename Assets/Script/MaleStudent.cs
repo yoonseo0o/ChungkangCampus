@@ -83,7 +83,7 @@ public class MaleStudent : AI
     }
     private bool BreakHeartGuard()
     {
-        if(heartGuardGauge.value <1&& heartGuardGauge.value >0) 
+        if(heartGuardGauge.value < 1 && heartGuardGauge.value > 0) 
         {
             return false;
         }
