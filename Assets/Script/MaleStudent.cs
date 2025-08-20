@@ -20,6 +20,8 @@ public class MaleStudent : AI
 
     [Header("HeartGuard Status")]
     [SerializeField] private Slider heartGuardGauge;
+    [SerializeField] private Slider RivalGauge;
+    private Slider useGauge;
     public static float timeToBreakGauge = 2;
     [SerializeField] private float callTime = 0.2f; // break while
     public static event Action<MaleStudent> breakHeartGuard;
@@ -28,6 +30,8 @@ public class MaleStudent : AI
     [SerializeField] private float rivalDelayTime;
     [SerializeField] private float rivalTimeToBreakGauge;
     public static event Action<MaleStudent> rivalMatch;
+    [SerializeField] private EyeLaser eyelaser;
+    [SerializeField] private Transform laserPointer;
 
 
     [Header("Following")]
@@ -40,6 +44,7 @@ public class MaleStudent : AI
         base.debugLineColor = GetComponent<SpriteRenderer>().color;
         base.Start();
         currentState = State.None;
+        useGauge = heartGuardGauge;
     }
 
     // Update is called once per frame
@@ -54,12 +59,13 @@ public class MaleStudent : AI
     {
         switch(currentState)
         {
-            case State.OwnedByPlayer:
+            case State.OwnedByPlayer: 
             case State.BeingAttacked:
                 break;
             case State.None:
             Debug.Log("´«ºû °ø°Ý ½ÃÀÛ --------------");
-            currentState = State.BeingAttacked;
+                useGauge.gameObject.SetActive(true);
+                currentState = State.BeingAttacked;
             IsMove = false;
             StartCoroutine(EyeLaserAttacked());
                 break;
@@ -67,7 +73,8 @@ public class MaleStudent : AI
                 Debug.Log("¶óÀÌ¹ú °ø°Ý");
                 if (!GameManager.Instance.ManaManager.ManaIncrease(-manaCostRival))
                     break;
-                heartGuardGauge.value += heartGuardGauge.maxValue / (timeToBreakGauge / callTime);
+                Debug.Log($"gauge : {useGauge.value}");
+                useGauge.value += useGauge.maxValue / (timeToBreakGauge / callTime);
                 BreakHeartGuard(); 
                 break;
         } 
@@ -77,17 +84,18 @@ public class MaleStudent : AI
         if(currentState == State.BeingAttacked)
         {
             Debug.Log("´«ºû °ø°Ý Áß´Ü --------------");
+            useGauge.gameObject.SetActive(false);
             currentState = State.None;
             IsMove = true;
         }
     }
     private bool BreakHeartGuard()
     {
-        if(heartGuardGauge.value < 1 && heartGuardGauge.value > 0) 
+        if(useGauge.value < 1 && useGauge.value > 0) 
         {
             return false;
         }
-        if (heartGuardGauge.value == 1)
+        if (useGauge.value == 1)
         {
             Debug.Log($"²¿½É ¼º°ø");
             currentState = State.OwnedByPlayer;
@@ -95,26 +103,30 @@ public class MaleStudent : AI
             ReceiveInterruptedEyeLaser();
             transform.GetComponent<BoxCollider2D >().enabled = false;
         }
-        else if (heartGuardGauge.value == 0)
+        else if (useGauge.value == 0)
         {
             Debug.Log($"²¿½É ½ÇÆÐ");
             currentState = State.OwnedByRival;
             breakHeartGuard?.Invoke(this);
             Destroy(this.gameObject);
         }
+        eyelaser.IsFire = false;
+
+        laserPointer.gameObject.SetActive(false);
+        heartGuardGauge.gameObject.SetActive(false);
+        RivalGauge.gameObject.SetActive(false);
         return true;
     }
     private IEnumerator EyeLaserAttacked()
     {
         float currentTime = 0;
-        float breakTime = timeToBreakGauge / callTime;
-        Debug.Log($"{timeToBreakGauge} / {callTime} = {breakTime}");
+        float breakTime = timeToBreakGauge / callTime; 
         while (currentState==State.BeingAttacked)
-        {
-            Debug.Log($"{-manaCostNomal} / {breakTime} = {-manaCostNomal / breakTime}");
+        { 
             if (!GameManager.Instance.ManaManager.ManaIncrease(-manaCostNomal / breakTime))
                 break;
-            heartGuardGauge.value += heartGuardGauge.maxValue / breakTime;
+            Debug.Log($"gauge : {useGauge.value} | {(useGauge==RivalGauge)}");
+            useGauge.value += useGauge.maxValue / breakTime;
             if (BreakHeartGuard())
             {
                 break;
@@ -125,6 +137,15 @@ public class MaleStudent : AI
                 currentTime += callTime;
                 if (currentTime >= rivalDelayTime)
                 {
+                    RivalGauge.value = useGauge.value;
+                    useGauge = RivalGauge;
+                    heartGuardGauge.gameObject.SetActive(false);
+                    RivalGauge.gameObject.SetActive(true);
+                    laserPointer.gameObject.SetActive(true);
+                    laserPointer.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                    laserPointer.position += Vector3.back* laserPointer.position.z;
+                    eyelaser.IsFire = true;
+                    StartCoroutine(eyelaser.BlinkLaser());
                     StartCoroutine(RivalMatch());
                     break;
                 }
@@ -140,7 +161,7 @@ public class MaleStudent : AI
         {
             //Debug.Log($"{rivalMatchCount}¸íÀÇ ¶óÀÌ¹ú ¸ÅÄ¡ Áß..");
 
-            heartGuardGauge.value -= GetRivalCount() * heartGuardGauge.maxValue / (rivalTimeToBreakGauge / callTime);
+            RivalGauge.value -= GetRivalCount() * RivalGauge.maxValue / (rivalTimeToBreakGauge / callTime);
             if (BreakHeartGuard())
                 break;
             yield return new WaitForSeconds(callTime);

@@ -19,7 +19,6 @@ public class ManaManager : MonoBehaviour
     }
     public bool ManaIncrease(float amount)
     {
-        Debug.Log(amount);
         if (IsFeverTime) return true; 
         if (amount < 0 && amount > mana)
         { 

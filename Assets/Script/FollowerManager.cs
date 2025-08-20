@@ -57,8 +57,7 @@ public class FollowerManager : MonoBehaviour
         if (male.currentState!=MaleStudent.State.OwnedByPlayer)
         {
             return;
-        }
-        Debug.Log("addFollower");
+        } 
         if(followers.Count > 0)
         {
             male.followTarget = followers[followers.Count - 1].transform;

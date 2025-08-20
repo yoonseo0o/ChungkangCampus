@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 3c4750710c8aa8947893065d254ad40d
+guid: 77d864dd170a864418b0e0c936af682b
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2567590799827646129
-    second: Pc_mob_skill_2_0
+      213: -7133404914341179179
+    second: fight_Pink_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -51,7 +51,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 180
+  spritePixelsToUnits: 240
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Pc_mob_skill_2_0
+      name: fight_Pink_0
       rect:
         serializedVersion: 2
-        x: 24
-        y: 15
-        width: 682
-        height: 653
+        x: 25
+        y: 20
+        width: 443
+        height: 59
       alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 8, y: 0, z: 8, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1b6b9409a3ae1a320800000000000000
-      internalID: 2567590799827646129
+      spriteID: 5d01ba9560e010d90800000000000000
+      internalID: -7133404914341179179
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 343c3b87fbadb4f48b6dc477fded21dd
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Pc_mob_skill_2_0: 2567590799827646129
+      fight_Pink_0: -7133404914341179179
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -186,6 +186,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7316304042924459559}
     m_Modifications:
+    - target: {fileID: 547627016761054543, guid: 5ee1166f5d2baca478c100605ef0b731, type: 3}
+      propertyPath: blinkTime
+      value: 0.08
+      objectReference: {fileID: 0}
     - target: {fileID: 773176964029320732, guid: 5ee1166f5d2baca478c100605ef0b731, type: 3}
       propertyPath: m_Name
       value: EyeLaser

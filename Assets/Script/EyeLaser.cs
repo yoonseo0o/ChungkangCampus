@@ -10,11 +10,11 @@ public class EyeLaser : MonoBehaviour
     [SerializeField] private Transform laserR;
     [SerializeField] private Transform laserL;
     [SerializeField] private Vector3 target;
-    private float laserlength=2.08f;
+    [SerializeField] private float laserlength;
     [SerializeField] private float blinkTime;
 
     [SerializeField] private Sprite[] eyeImg;
-    private bool IsFire;
+    public bool IsFire;
     private void Awake()
     {
     }
@@ -57,7 +57,7 @@ public class EyeLaser : MonoBehaviour
             transform.gameObject.SetActive(false); 
         }
     }
-    private IEnumerator BlinkLaser()
+    public IEnumerator BlinkLaser()
     { 
         int count = 0;
         while(IsFire)

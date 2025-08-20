@@ -1,10 +1,22 @@
 fileFormatVersion: 2
-guid: 3c4750710c8aa8947893065d254ad40d
+guid: 594d7264ab6bf774ba6c63dd6da49ae3
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2567590799827646129
-    second: Pc_mob_skill_2_0
+      213: -3186958114754814291
+    second: rock_on_0
+  - first:
+      213: -4640185866419100361
+    second: rock_on_1
+  - first:
+      213: 3078146747314852122
+    second: rock_on_2
+  - first:
+      213: 5221020684561417186
+    second: rock_on_3
+  - first:
+      213: 4618409701424959301
+    second: rock_on_4
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,12 +58,12 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 180
+  spritePixelsToUnits: 691.4
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -100,13 +112,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Pc_mob_skill_2_0
+      name: rock_on_0
       rect:
         serializedVersion: 2
-        x: 24
-        y: 15
-        width: 682
-        height: 653
+        x: 0
+        y: 65
+        width: 41
+        height: 63
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +127,96 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1b6b9409a3ae1a320800000000000000
-      internalID: 2567590799827646129
+      spriteID: dae9df7da76a5c3d0800000000000000
+      internalID: -3186958114754814291
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rock_on_1
+      rect:
+        serializedVersion: 2
+        x: 28
+        y: 2
+        width: 127
+        height: 126
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7352d4c0a8fba9fb0800000000000000
+      internalID: -4640185866419100361
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rock_on_2
+      rect:
+        serializedVersion: 2
+        x: 142
+        y: 65
+        width: 41
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a11d9307826c7ba20800000000000000
+      internalID: 3078146747314852122
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rock_on_3
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 42
+        height: 61
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e3004486aac47840800000000000000
+      internalID: 5221020684561417186
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rock_on_4
+      rect:
+        serializedVersion: 2
+        x: 142
+        y: 0
+        width: 41
+        height: 61
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 54f07a07723e71040800000000000000
+      internalID: 4618409701424959301
       vertices: []
       indices: 
       edges: []
@@ -125,7 +225,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +235,11 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Pc_mob_skill_2_0: 2567590799827646129
+      rock_on_0: -3186958114754814291
+      rock_on_1: -4640185866419100361
+      rock_on_2: 3078146747314852122
+      rock_on_3: 5221020684561417186
+      rock_on_4: 4618409701424959301
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

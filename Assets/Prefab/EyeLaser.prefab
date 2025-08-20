@@ -138,10 +138,12 @@ MonoBehaviour:
   laserR: {fileID: 2653318815570391472}
   laserL: {fileID: 0}
   target: {x: 0, y: 0, z: 0}
-  blinkTime: 0.1
+  laserlength: 3
+  blinkTime: 0.08
   eyeImg:
   - {fileID: -4928137623923993171, guid: 9f2a0e9a9fd184f43a340807e7a9e09b, type: 3}
   - {fileID: 2567590799827646129, guid: 3c4750710c8aa8947893065d254ad40d, type: 3}
+  IsFire: 0
 --- !u!1 &7633842425139671637
 GameObject:
   m_ObjectHideFlags: 0

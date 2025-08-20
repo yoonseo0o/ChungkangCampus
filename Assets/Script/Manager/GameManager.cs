@@ -91,8 +91,7 @@ public class GameManager : MonoBehaviour
         }
     }
     void AddScore(MaleStudent male)
-    {
-        Debug.Log("addscore");
+    { 
         Score += male.scoreValue;
     }
     private void EndGame()

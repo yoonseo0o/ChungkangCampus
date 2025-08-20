@@ -7,8 +7,7 @@ public class UIManger : MonoBehaviour
     [SerializeField] private TMP_Text score;
     [SerializeField] private Transform manaList;
     [SerializeField] private Slider feverTimeGauge;
-    [SerializeField] private GameObject upFloorButton;
-    [SerializeField] private GameObject downFloorButton;
+    [SerializeField] private GameObject floorButton;
     public void SetTimerUI(float value)
     {
         timer.value = value;
@@ -45,25 +44,7 @@ public class UIManger : MonoBehaviour
         feverTimeGauge.value = value;
     }
     public void SetActiveFloorButton(bool value)
-    {
-        int curfloor = GameManager.Instance.FloorManager.curFloor;
-        int maxfloor = GameManager.Instance.FloorManager.maxFloor;
-        if (curfloor == 1)
-        {
-            Debug.Log("min");
-            upFloorButton.SetActive(value);
-            downFloorButton.SetActive(false);
-        }
-        else if (curfloor == maxfloor)
-        {
-            Debug.Log("max");
-            upFloorButton.SetActive(false);
-            downFloorButton.SetActive(value);
-        }
-        else
-        {
-            upFloorButton.SetActive(value);
-            downFloorButton.SetActive(value);
-        }
+    { 
+        floorButton.SetActive(value); 
     }
 }
