@@ -6,7 +6,10 @@ public class RoofEvent : MonoBehaviour
 {
 
     [SerializeField] private float distance;
-    [SerializeField] private float disappearTime; 
+    [SerializeField] private float disappearTime;
+
+
+    [SerializeField] private GameObject wall;
     [Header("Animation")]
     [SerializeField] private Animator animator;
     [SerializeField] protected SpriteRenderer spriteRenderer;
@@ -19,8 +22,12 @@ public class RoofEvent : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            animator.SetFloat("anim", 1);
-            StartCoroutine(FadeOutWalk(disappearTime));
+            if(collision.GetComponent<Player>().TakeOffGrasses())
+            {
+                wall.SetActive(false);
+                animator.SetFloat("anim", 1);
+                StartCoroutine(FadeOutWalk(disappearTime));
+            }
         }
     }
     private IEnumerator FadeOutWalk(float time)

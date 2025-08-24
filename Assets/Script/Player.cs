@@ -30,7 +30,9 @@ public class Player : MonoBehaviour
     public static event Action<Vector2> OnPlayerMoved;
     public static event Action OnPlayerStopped;
 
+    // wall break
 
+    int wallLayer; 
     // attack male
     private MaleStudent attackedMale;
     private FollowerManager followingManager;
@@ -50,6 +52,7 @@ public class Player : MonoBehaviour
         MaleStudent.breakHeartGuard += EndMaleAttack;
         wallDistanceValue = transform.GetComponent<BoxCollider2D>().size.x / 2;
         mana = maxMana;
+        wallLayer = LayerMask.NameToLayer("wall"); 
     }
 
     // Update is called once per frame
@@ -96,14 +99,16 @@ public class Player : MonoBehaviour
             if (wallState == WallState.None)
             {
 
-                RaycastHit2D rightHit = Physics2D.Raycast(transform.position, Vector3.right, wallDistanceValue, LayerMask.GetMask("wall"));
-                RaycastHit2D leftHit = Physics2D.Raycast(transform.position, Vector3.left, wallDistanceValue, LayerMask.GetMask("wall"));
-                if (rightHit || leftHit)
+                RaycastHit2D rightHit = Physics2D.Raycast(transform.position, Vector3.right, wallDistanceValue, LayerMask.GetMask("wall") | LayerMask.GetMask("endWall"));
+                RaycastHit2D leftHit = Physics2D.Raycast(transform.position, Vector3.left, wallDistanceValue, LayerMask.GetMask("wall") | LayerMask.GetMask("endWall"));
+                RaycastHit2D hit = rightHit ? rightHit : leftHit;
+                if (hit)
                 {
                     wallState = rightHit ? WallState.Right :WallState.Left;
                     moveVec = Vector2.zero;
                     OnPlayerStopped?.Invoke();
-                    GameManager.Instance.UIManger.SetActiveFloorButton(true);
+                    if(hit.collider.gameObject.layer == wallLayer)
+                        GameManager.Instance.UIManger.SetActiveFloorButton(true);
                     break;
                 }
             }
@@ -293,4 +298,17 @@ public class Player : MonoBehaviour
         isGrasses = true;
     }
 
+    public bool TakeOffGrasses()
+    {
+        if (isGrasses)
+        {
+            Debug.Log("¾È°æ ¹þ±â±â!><");
+            isGrasses = false;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 }
