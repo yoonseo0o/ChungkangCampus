@@ -27,16 +27,14 @@ public class MaleStudent : AI
     public static event Action<MaleStudent> breakHeartGuard;
 
 
-
     [Header("RivalMatch")]
     [SerializeField] private GameObject focusCursor;
-
-    [Header("RivalMatch")]
     [SerializeField] private float rivalDelayTime;
     [SerializeField] private float rivalTimeToBreakGauge;
     public static event Action<MaleStudent> rivalMatch;
     [SerializeField] private EyeLaser eyelaser;
     [SerializeField] private Transform laserPointer;
+    [SerializeField] private float manaAmount;
 
 
     [Header("Following")]
@@ -107,6 +105,10 @@ public class MaleStudent : AI
         if (useGauge.value == 1)
         {
             Debug.Log($"²¿½É ¼º°ø");
+            if(currentState==State.RivalMatch)
+                GameManager.Instance.ManaManager.DropMana(this.transform.position, 1+ manaAmount*GetRivalCount());
+            else
+                GameManager.Instance.ManaManager.DropMana(this.transform.position,1);
             currentState = State.OwnedByPlayer;
             breakHeartGuard?.Invoke(this);
             ReceiveInterruptedEyeLaser();

@@ -22,8 +22,8 @@ public class Teacher : AI
         
         if (collision.CompareTag("Player"))
         {
-            GameManager.Instance.ManaManager.ManaIncrease(manaAmount);
-            GameManager.Instance.player.ReceiveShoulderBump(delayTimeShoulderBump);
+            if(GameManager.Instance.player.ReceiveShoulderBump(delayTimeShoulderBump))
+                GameManager.Instance.ManaManager.ManaIncrease(manaAmount);
         }
     }
 }

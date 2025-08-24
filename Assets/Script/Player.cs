@@ -14,7 +14,7 @@ public class Player : MonoBehaviour
     private float mana;
     [SerializeField] private float decreaseMana; // ÇÑ¸í ²¿½Ç¶§?
     [Header("StatusFlags")]
-    bool isMask;
+    bool isGrasses;
     enum MoveState { Idle, Walk, Run, Focusing, RivalMatch, ShoulderBump }
     [SerializeField] private MoveState moveState;
     enum WallState { Left, Right, None }
@@ -261,22 +261,36 @@ public class Player : MonoBehaviour
         //followingManager.AddFollower(male);
 
     }
-    public void ReceiveShoulderBump(float delayTime)
+    public bool ReceiveShoulderBump(float delayTime)
     {
         if (moveState == MoveState.ShoulderBump)
-            return;
+            return false;
+        if(isGrasses)
+        {
+            isGrasses = false;
+            Debug.Log("¾È°æ ½á¼­ ¾î±ú»§ ÇÇÇÔ!");
+            return false;
+        }
         Debug.Log("¾î±ú»§ ¸ÂÀ½");
         moveState = MoveState.ShoulderBump;
         // ¾Ö´Ï¸ÞÀÌ¼Ç Àç»ý
-        Invoke("asdf", delayTime);
+        //Invoke("asdf", delayTime);
+        StartCoroutine(DelayAction(delayTime, () => moveState = MoveState.Idle));
+        return true;
     }
-    private void asdf()
+    /*private void asdf()
     {
         moveState = MoveState.Idle;
-    }
-    public void EquipMask()
+    }*/
+    IEnumerator DelayAction(float delay, System.Action action)
     {
-
+        yield return new WaitForSeconds(delay);
+        action?.Invoke();
+    }
+    public void WearGrasses()
+    {
+        Debug.Log("¾È°æ Âø¿ë!");
+        isGrasses = true;
     }
 
 }

@@ -67,6 +67,7 @@ public class GameManager : MonoBehaviour
     {
         Score = 0;
         CurrentTime = 0;
+        ManaManager.SetMana(4);
         //UIManger.SetTimerUI(currentTime);
     }
     void OnEnable() { 

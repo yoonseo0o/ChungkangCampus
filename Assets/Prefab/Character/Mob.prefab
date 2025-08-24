@@ -554,6 +554,7 @@ MonoBehaviour:
   rivalTimeToBreakGauge: 20
   eyelaser: {fileID: -5105936450991419981}
   laserPointer: {fileID: 246624366955416282}
+  manaAmount: 0.5
   followTarget: {fileID: 0}
   followDistance: 0
 --- !u!61 &4028355634140201231
