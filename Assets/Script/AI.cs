@@ -17,6 +17,10 @@ public class AI : MonoBehaviour
     [Header("Animation")]
     [SerializeField] private Animator animator;
     [SerializeField] protected SpriteRenderer spriteRenderer;
+    protected enum animParam
+    {
+        idle = 0, walk, hit, hit_rival,ghost
+    }
 
     protected virtual void Start()
     {
@@ -36,7 +40,6 @@ public class AI : MonoBehaviour
             {
                 StopCoroutine(co);
                 co = null;
-                animator.SetFloat("anim", 0);
             }
         }
         Debug.DrawLine(pivotPoint - Vector3.right * movementRange,
@@ -56,7 +59,7 @@ public class AI : MonoBehaviour
             direction = -1;
         }
         else
-        {
+        { 
             direction = Random.Range(-1, 2);
         }
         co = StartCoroutine(moveCo(direction));
@@ -69,12 +72,12 @@ public class AI : MonoBehaviour
         while (count > 0 && IsMove)
         {
             //Debug.DrawLine(trfVec + Vector3.up/2, trfVec + direction * Vector3.right * walkDistance + Vector3.up / 2, Color.blue); 
-            if(direction ==0)
-                animator.SetFloat("anim", 0);
+            if (direction == 0) 
+            UpdateAnim(animParam.idle); 
             else
             {
-                animator.SetFloat("anim", 1);
-                if(direction <0)
+                UpdateAnim(animParam.walk);
+                if (direction < 0)
                     spriteRenderer.flipX = false;
                 else
                     spriteRenderer.flipX = true;
@@ -84,5 +87,9 @@ public class AI : MonoBehaviour
             yield return null;
         }
         co = null;
+    }
+    protected void UpdateAnim(animParam anim)
+    {
+        animator.SetFloat("anim", (int)anim);
     }
 }

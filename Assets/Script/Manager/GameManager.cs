@@ -39,6 +39,7 @@ public class GameManager : MonoBehaviour
     public UIManger UIManger;
     public ManaManager ManaManager;
     public FloorManager FloorManager;
+    public FollowerManager FollowerManager;
     private static GameManager instance;
     public static GameManager Instance { get { return instance; } }
     void Awake()

@@ -34,7 +34,6 @@ public class ManaManager : MonoBehaviour
             mana = 0;
         else
             mana += amount;
-        Debug.Log($"manaIncrease | amount : {amount}, mana : {mana}");
         //mana = Mathf.Ceil(mana * 100f) / 100f;
         GameManager.Instance.UIManger.SetManaUI(mana);
         if(mana < 0)

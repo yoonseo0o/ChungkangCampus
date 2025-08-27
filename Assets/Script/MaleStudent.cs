@@ -9,8 +9,8 @@ public class MaleStudent : AI
     public enum State { None, BeingAttacked, RivalMatch, OwnedByPlayer, OwnedByRival }
     public State currentState { private set; get; }
 
-    public enum Type { none, mob, professor, named }
-    [SerializeField] public Type type { get; protected set; }
+    public enum Type { none, mob, named }
+    public Type type;
     [Header("Gameplay Setting")]
     public int scoreValue;
     [SerializeField]
@@ -39,11 +39,10 @@ public class MaleStudent : AI
 
     [Header("Following")]
     public Transform followTarget;
-    [SerializeField] private float followDistance;
+     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     protected override void Start()
     {
-        type = Type.mob;
         base.debugLineColor = GetComponent<SpriteRenderer>().color;
         base.Start();
         currentState = State.None;
@@ -70,19 +69,18 @@ public class MaleStudent : AI
             case State.BeingAttacked:
                 break;
             case State.None:
-            Debug.Log("눈빛 공격 시작 --------------");
                 useGauge.gameObject.SetActive(true);
                 currentState = State.BeingAttacked;
             IsMove = false;
+                UpdateAnim(animParam.hit); 
             StartCoroutine(EyeLaserAttacked());
                 break;
             case State.RivalMatch:
-                Debug.Log("라이벌 공격");
+                UpdateAnim(animParam.hit_rival); 
                 if (!GameManager.Instance.ManaManager.ManaIncrease(-manaCostRival))
                     break;
-                Debug.Log($"gauge : {useGauge.value}");
                 useGauge.value += useGauge.maxValue / (timeToBreakGauge / callTime);
-                BreakHeartGuard(); 
+                IsBreakHeartGuard(); 
                 break;
         } 
     }
@@ -96,9 +94,9 @@ public class MaleStudent : AI
             IsMove = true;
         }
     }
-    private bool BreakHeartGuard()
+    private bool IsBreakHeartGuard()
     {
-        if(useGauge.value < 1 && useGauge.value > 0) 
+        if (useGauge.value < 1 && useGauge.value > 0) 
         {
             return false;
         }
@@ -122,7 +120,7 @@ public class MaleStudent : AI
             Destroy(this.gameObject);
         }
         eyelaser.IsFire = false;
-
+        UpdateAnim(animParam.ghost);
         laserPointer.gameObject.SetActive(false);
         heartGuardGauge.gameObject.SetActive(false);
         RivalGauge.gameObject.SetActive(false);
@@ -137,11 +135,10 @@ public class MaleStudent : AI
             if (!GameManager.Instance.ManaManager.ManaIncrease(-manaCostNomal / breakTime))
                 break;
             useGauge.value += useGauge.maxValue / breakTime;
-            if (BreakHeartGuard())
+            if (IsBreakHeartGuard())
             {
                 break;
             }
-            Debug.Log($"대기 중인 라이벌 수 : {GetRivalCount()}");
             // 라이벌 매치 
             if(GetRivalCount() > 0)
             {
@@ -173,7 +170,7 @@ public class MaleStudent : AI
             //Debug.Log($"{rivalMatchCount}명의 라이벌 매치 중..");
 
             RivalGauge.value -= GetRivalCount() * RivalGauge.maxValue / (rivalTimeToBreakGauge / callTime);
-            if (BreakHeartGuard())
+            if (IsBreakHeartGuard())
                 break;
             yield return new WaitForSeconds(callTime);
         } 
@@ -184,9 +181,14 @@ public class MaleStudent : AI
         return rivalMatch?.GetInvocationList().Length-1 ?? 0;
     }
     private void FollowingTarget()
-    {
+    { 
         // 거리 조절
-        
-        transform.position = Vector3.MoveTowards(transform.position, followTarget.position, moveSpeed * Time.deltaTime);
+        if(GameManager.Instance.FollowerManager.followDistance<0)
+            spriteRenderer.flipX = true;
+        else 
+            spriteRenderer.flipX = false;
+        transform.position = Vector3.MoveTowards(transform.position, 
+            followTarget.position + Vector3.right * GameManager.Instance.FollowerManager.followDistance,
+            GameManager.Instance.FollowerManager.followSpeed * Time.deltaTime);
     }
 }

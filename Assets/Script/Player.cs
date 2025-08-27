@@ -40,7 +40,12 @@ public class Player : MonoBehaviour
     [Header("Graphic")]
     [SerializeField] private Animator animator;
     [SerializeField] private SpriteRenderer spriteRenderer;
-    [SerializeField] private EyeLaser eyeLaser; 
+    [SerializeField] private EyeLaser eyeLaser;
+    enum animParam
+    {
+        idle = 0, walk, run, idle_glass, walk_glass, run_glass,
+        bump, bump_glass, focusing, focusing_back, focusing_glass
+    }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -69,7 +74,7 @@ public class Player : MonoBehaviour
             case MoveState.Focusing: 
             case MoveState.ShoulderBump:
             case MoveState.Idle:
-                animator.SetFloat("anim", 0);
+                UpdateAnim();
                 if (moveCo != null)
                 {
                     StopCoroutine(moveCo);
@@ -77,13 +82,13 @@ public class Player : MonoBehaviour
                 }
                 break;
             case MoveState.Walk:
-                animator.SetFloat("anim", 0.5f);
+                UpdateAnim();
                 if (moveCo != null)
                     StopCoroutine(moveCo);
                 moveCo = StartCoroutine(WalkCo(moveVec * walkSpeed));
                 break;
-            case MoveState.Run: 
-                animator.SetFloat("anim", 1f);
+            case MoveState.Run:
+                UpdateAnim();
                 if (moveCo != null)
                     StopCoroutine(moveCo);
                 moveCo = StartCoroutine(WalkCo(moveVec * runSpeed));
@@ -115,7 +120,10 @@ public class Player : MonoBehaviour
             else
             {
 
-                animator.SetFloat("anim", 0);
+                if (isGrasses)
+                    animator.SetFloat("anim", (int)animParam.idle_glass);
+                else
+                    animator.SetFloat("anim", (int)animParam.idle);
                 if ((wallState == WallState.Right && moveVec == Vector2.right) ||
                 (wallState == WallState.Left && moveVec == Vector2.left))
                 {
@@ -128,11 +136,12 @@ public class Player : MonoBehaviour
             if(moveVec == Vector2.left)
             {
                 spriteRenderer.flipX = false;
+                GameManager.Instance.FollowerManager.followDistance = Mathf.Abs(GameManager.Instance.FollowerManager.followDistance);
             }
             else
             {
-                spriteRenderer.flipX = true; 
-
+                spriteRenderer.flipX = true;
+                GameManager.Instance.FollowerManager.followDistance = -Mathf.Abs(GameManager.Instance.FollowerManager.followDistance);
             }
             transform.Translate(vec * Time.deltaTime);
             yield return null;
@@ -222,7 +231,8 @@ public class Player : MonoBehaviour
         if (hit)
         {
             moveState = MoveState.Focusing;
-            animator.SetFloat("anim", 0.2f);
+            UpdateAnim();
+
             if (moveCo != null)
             {
                 StopCoroutine(moveCo);
@@ -270,17 +280,24 @@ public class Player : MonoBehaviour
     {
         if (moveState == MoveState.ShoulderBump)
             return false;
-        if(isGrasses)
+        if (isGrasses)
         {
             isGrasses = false;
             Debug.Log("¾È°æ ½á¼­ ¾î±ú»§ ÇÇÇÔ!");
+            UpdateAnim();
             return false;
         }
         Debug.Log("¾î±ú»§ ¸ÂÀ½");
         moveState = MoveState.ShoulderBump;
+        UpdateAnim();
+
         // ¾Ö´Ï¸ÞÀÌ¼Ç Àç»ý
         //Invoke("asdf", delayTime);
-        StartCoroutine(DelayAction(delayTime, () => moveState = MoveState.Idle));
+        StartCoroutine(DelayAction(delayTime, () =>
+        {
+            moveState = MoveState.Idle;
+            UpdateAnim();
+        }));
         return true;
     }
     /*private void asdf()
@@ -295,7 +312,8 @@ public class Player : MonoBehaviour
     public void WearGrasses()
     {
         Debug.Log("¾È°æ Âø¿ë!");
-        isGrasses = true;
+        isGrasses = true; 
+        UpdateAnim();
     }
 
     public bool TakeOffGrasses()
@@ -303,12 +321,53 @@ public class Player : MonoBehaviour
         if (isGrasses)
         {
             Debug.Log("¾È°æ ¹þ±â±â!><");
-            isGrasses = false;
+            isGrasses = false; 
+            UpdateAnim();
             return true;
         }
         else
         {
             return false;
+        }
+    }
+    private void UpdateAnim()
+    {
+
+        switch (moveState)
+        {
+            case MoveState.Focusing:
+                if (hit.transform.position.y > transform.position.y)
+                    animator.SetFloat("anim", (int)animParam.focusing_back);
+                else
+                {
+                    if (isGrasses)
+                        animator.SetFloat("anim", (int)animParam.focusing_glass);
+                    else
+                        animator.SetFloat("anim", (int)animParam.focusing);
+                }
+                break;
+            case MoveState.ShoulderBump:
+                animator.SetFloat("anim", (int)animParam.bump);
+                break;
+            case MoveState.Idle:
+                if (isGrasses)
+                    animator.SetFloat("anim", (int)animParam.idle_glass);
+                else
+                    animator.SetFloat("anim", (int)animParam.idle);
+                break;
+            case MoveState.Walk:
+                if (isGrasses)
+                    animator.SetFloat("anim", (int)animParam.walk_glass);
+                else
+                    animator.SetFloat("anim", (int)animParam.walk);
+                break;
+            case MoveState.Run:
+                if (isGrasses)
+                    animator.SetFloat("anim", (int)animParam.run_glass);
+                else
+                    animator.SetFloat("anim", (int)animParam.run);
+                break;
+
         }
     }
 }

@@ -11,22 +11,26 @@ PrefabInstance:
     - target: {fileID: -7576125228650021098, guid: ff548891ff8585b4083f3127304a893b, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: be94b11e6a471db438022687ed9e16ba, type: 2}
+      objectReference: {fileID: 9100000, guid: 5701880cfa59a9642bfdfe586342e9df, type: 2}
     - target: {fileID: 1540301701690096911, guid: ff548891ff8585b4083f3127304a893b, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 3892901125096277713, guid: 67ae529570ba29148951d1aba6a4e987, type: 3}
+      objectReference: {fileID: -7570449320315104321, guid: 8df18204f76f2fe46bdfd53d8872e4f9, type: 3}
     - target: {fileID: 4028355634140201231, guid: ff548891ff8585b4083f3127304a893b, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.x
-      value: 1.66
+      value: 1.8
       objectReference: {fileID: 0}
     - target: {fileID: 4028355634140201231, guid: ff548891ff8585b4083f3127304a893b, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.y
-      value: 4.76
+      value: 4.74
       objectReference: {fileID: 0}
     - target: {fileID: 6113429445999962191, guid: ff548891ff8585b4083f3127304a893b, type: 3}
       propertyPath: m_Name
-      value: maleStudent Variant 1
+      value: MobB
+      objectReference: {fileID: 0}
+    - target: {fileID: 7227577194124822591, guid: ff548891ff8585b4083f3127304a893b, type: 3}
+      propertyPath: type
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7316304042924459559, guid: ff548891ff8585b4083f3127304a893b, type: 3}
       propertyPath: m_LocalPosition.x

@@ -26,7 +26,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6113429445999962191, guid: ff548891ff8585b4083f3127304a893b, type: 3}
       propertyPath: m_Name
-      value: maleStudent Variant 5
+      value: NYungkon
+      objectReference: {fileID: 0}
+    - target: {fileID: 7227577194124822591, guid: ff548891ff8585b4083f3127304a893b, type: 3}
+      propertyPath: type
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7316304042924459559, guid: ff548891ff8585b4083f3127304a893b, type: 3}
       propertyPath: m_LocalPosition.x

@@ -37,7 +37,6 @@ public class FemaleStudent : AI
     private void Matching(MaleStudent male)
     {
         MatchStartAnim();
-        Debug.Log($"{this.name}가 {male.name}한테서 라이벌 대결 중 !");
         IsMove = false;
         MaleStudent.breakHeartGuard += MatchEnd;
         //flip idle
@@ -55,9 +54,9 @@ public class FemaleStudent : AI
     }
     private void MatchEnd(MaleStudent male)
     {
-        if(male.currentState == MaleStudent.State.OwnedByRival) 
+        /*if(male.currentState == MaleStudent.State.OwnedByRival) 
             Debug.Log($"{this.name}가 라이벌 대결 성공 !");
-        else Debug.Log($"{this.name}가 라이벌 대결 실패 !");
+        else Debug.Log($"{this.name}가 라이벌 대결 실패 !");*/
         MaleStudent.rivalMatch -= Matching;
         MaleStudent.breakHeartGuard -= MatchEnd;
         eyeLaser.EyeLaserOn(false);
