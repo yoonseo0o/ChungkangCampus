@@ -543,20 +543,22 @@ MonoBehaviour:
   IsMove: 0
   animator: {fileID: 0}
   spriteRenderer: {fileID: 0}
+  type: 0
   scoreValue: 2000
+  scoreValueSecond: 10
   manaCostNomal: 0.5
   manaCostRival: 0.04
   heartGuardGauge: {fileID: 1619057103923902077}
   RivalGauge: {fileID: 4111191219530418053}
-  callTime: 0.2
+  callTime: 0.1
   focusCursor: {fileID: 6588648091214155152}
   rivalDelayTime: 0.5
   rivalTimeToBreakGauge: 20
   eyelaser: {fileID: -5105936450991419981}
   laserPointer: {fileID: 246624366955416282}
   manaAmount: 0.5
+  scoreValueRival: 3
   followTarget: {fileID: 0}
-  followDistance: 0
 --- !u!61 &4028355634140201231
 BoxCollider2D:
   m_ObjectHideFlags: 0

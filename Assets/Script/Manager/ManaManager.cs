@@ -35,7 +35,7 @@ public class ManaManager : MonoBehaviour
         else
             mana += amount;
         //mana = Mathf.Ceil(mana * 100f) / 100f;
-        GameManager.Instance.UIManger.SetManaUI(mana);
+        GameManager.Instance.UIManager.SetManaUI(mana);
         if(mana < 0)
         {
             // 마나 소진시 미구현
@@ -50,24 +50,24 @@ public class ManaManager : MonoBehaviour
     private IEnumerator FeverTime()
     {
         IsFeverTime = true;
-        GameManager.Instance.UIManger.SetActiveFeverGauge(true);
+        GameManager.Instance.UIManager.SetActiveFeverGauge(true);
         float curTime = feverTimeDuration;
 
         MaleStudent.timeToBreakGauge *= decreaseRate;  
         while (curTime>0)
         {
             curTime -= Time.deltaTime;
-            GameManager.Instance.UIManger.SetValueFeverGauge(curTime/feverTimeDuration); 
+            GameManager.Instance.UIManager.SetValueFeverGauge(curTime/feverTimeDuration); 
             yield return null;
         }
         MaleStudent.timeToBreakGauge /= decreaseRate; 
-        GameManager.Instance.UIManger.SetActiveFeverGauge(false);
+        GameManager.Instance.UIManager.SetActiveFeverGauge(false);
         IsFeverTime = false; 
     }
-    public void DropMana(Vector3 pos, float value)
+    public void DropHeart(Vector3 pos, float manaValue, int scoreValue)
     {
         GameObject obj = Instantiate(manaPrefab, pos, Quaternion.identity, transform);
-        obj.GetComponent<Mana>().Init(value);
-        obj.transform.localScale = Vector3.one*value;
+        obj.GetComponent<Mana>().Init(manaValue, scoreValue);
+        obj.transform.localScale = Vector3.one*manaValue;
     }
 }

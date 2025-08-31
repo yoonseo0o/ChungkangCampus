@@ -14,29 +14,32 @@ public class GameManager : MonoBehaviour
         set
         {
             _currentTime = value;
-            UIManger.SetTimerUI(_currentTime / playTime);
+            UIManager.SetTimerUI(_currentTime / playTime);
         }
         get
         {
             return _currentTime;
         }
     }
+    public bool IsTimeFlow;
     private int _score;
     public int Score
     {
         set
         {
             _score = value;
-            UIManger.SetScoreUI(_score);
+            UIManager.SetScoreUI(_score);
         }
         get
         {
             return _score;
         }
     }
+    public int clearNamedCount;
+    public int clearMaleCount;
     public Player player;
     [Header("Manager")]
-    public UIManger UIManger;
+    public UIManger UIManager;
     public ManaManager ManaManager;
     public FloorManager FloorManager;
     public FollowerManager FollowerManager;
@@ -48,22 +51,21 @@ public class GameManager : MonoBehaviour
         {
             instance = this;
         }
+        clearNamedCount = 0;
     }
     private void Start()
     {
         //Debug.Log("Start()");
         Init();
         Time.timeScale = 0f;
+        IsTimeFlow = true;
     }
     public void GameStart()
     {
         Time.timeScale = 1.0f;
         StartCoroutine(Timer());
     }
-    void Update()
-    {
-
-    }
+    public enum ScoreGrade { S=150000,A=50000,B=30000,C=0};
     private void Init()
     {
         Score = 0;
@@ -72,33 +74,54 @@ public class GameManager : MonoBehaviour
         //UIManger.SetTimerUI(currentTime);
     }
     void OnEnable() { 
-        MaleStudent.breakHeartGuard += AddScore;
+        //MaleStudent.breakHeartGuard += AddScore;
     }
     void OnDisable()
     {
-        MaleStudent.breakHeartGuard -= AddScore;
+        //MaleStudent.breakHeartGuard -= AddScore;
     }
     IEnumerator Timer()
     {
         Debug.Log("Timer()");
         while (true)
         {
-            CurrentTime += Time.deltaTime;
-            if (CurrentTime >= playTime)
+            if(IsTimeFlow)
             {
-                EndGame();
-                yield break;
+                //Time.timeScale = 1f;
+                CurrentTime += Time.deltaTime;
+                if (CurrentTime >= playTime)
+                {
+                    EndGame();
+                    yield break;
+                }
+
+            }
+            else
+            {
+                //Time.timeScale = 0f;
             }
             yield return null;
         }
-    }
-    void AddScore(MaleStudent male)
-    { 
-        Score += male.scoreValue;
     }
     private void EndGame()
     {
         Debug.Log("게임 종료");
         Time.timeScale = 0f;
+        if (Score >= (int)ScoreGrade.S && clearNamedCount >= 3)
+        {
+            UIManager.EndingResource(ScoreGrade.S);
+        }
+        else if (Score >= (int)ScoreGrade.A && clearNamedCount >= 1)
+        {
+            UIManager.EndingResource(ScoreGrade.A);
+        }
+        else if (Score >= (int)ScoreGrade.B && clearMaleCount > 0)
+        {
+            UIManager.EndingResource(ScoreGrade.B);
+        }
+        else
+        {
+            UIManager.EndingResource(ScoreGrade.C);
+        }
     }
 }

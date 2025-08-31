@@ -1,6 +1,9 @@
+using System;
+using System.Collections;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.U2D;
 using UnityEngine.UI;
 public class UIManger : MonoBehaviour
 {
@@ -12,6 +15,19 @@ public class UIManger : MonoBehaviour
     [SerializeField] private Slider feverTimeGauge;
     [SerializeField] private GameObject floorButton;
     private float manaValue=-1;
+
+    [Header("Ending")]
+    [SerializeField] private GameObject ending;
+    [SerializeField] private TMP_Text endingScoreText;
+    [SerializeField] private Image gradeSR;
+    [SerializeField] private Sprite[] gradeImg;
+    [SerializeField] private Image gayoSR;
+    [SerializeField] private Sprite[] gayoImg;
+    [Header("Fade")]
+    [SerializeField] private Image fadeImg;
+    [SerializeField] private float fadeSpeed;
+    public Action fadeComplete;
+    
     public void SetTimerUI(float value)
     {
         timer.value = value;
@@ -56,5 +72,61 @@ public class UIManger : MonoBehaviour
     public void SetActiveFloorButton(bool value)
     { 
         floorButton.SetActive(value); 
+    }
+    public void EndingResource(GameManager.ScoreGrade scoreGrade)
+    {
+        ending.SetActive(true);
+        endingScoreText.text = score.text;
+        switch (scoreGrade)
+        {
+            case GameManager.ScoreGrade.S:
+                gradeSR.sprite = gradeImg[0]? gradeImg[0]: gradeSR.sprite;
+                gayoSR.sprite = gayoImg[0] ? gayoImg[0] : gayoSR.sprite;
+                break;
+            case GameManager.ScoreGrade.A:
+                gradeSR.sprite = gradeImg[1] ? gradeImg[1] : gradeSR.sprite;
+                gayoSR.sprite = gayoImg[1] ? gayoImg[1] : gayoSR.sprite;
+                break;
+            case GameManager.ScoreGrade.B:
+                gradeSR.sprite = gradeImg[2] ? gradeImg[2] : gradeSR.sprite;
+                gayoSR.sprite = gayoImg[2] ? gayoImg[2] : gayoSR.sprite;
+                break;
+            case GameManager.ScoreGrade.C:
+                gradeSR.sprite = gradeImg[3] ? gradeImg[3] : gradeSR.sprite;
+                gayoSR.sprite = gayoImg[3] ? gayoImg[3] : gayoSR.sprite;
+                break;
+        }
+    }
+
+    public IEnumerator FadeIn()
+    {
+        fadeImg.gameObject.SetActive(true);
+        Color color = Color.black;
+        color.a = 1;
+        fadeImg.color = color;
+        while (fadeImg.color.a >= 0.01f)
+        { 
+            color.a -= fadeSpeed * Time.deltaTime;
+            fadeImg.color = color;
+            yield return null;
+        }
+        yield return new WaitForSeconds(0.5f);
+        fadeImg.gameObject.SetActive(false);
+        fadeComplete?.Invoke();
+        fadeComplete=null;
+    }
+    public IEnumerator FadeOut()
+    {
+        fadeImg.gameObject.SetActive(true);
+        Color color = Color.black;
+        color.a = 0;
+        fadeImg.color = color;
+        while (fadeImg.color.a <= 0.99f)
+        {
+            color.a += fadeSpeed * Time.deltaTime;
+            fadeImg.color = color;
+            yield return null;
+        }
+        fadeComplete?.Invoke();
     }
 }

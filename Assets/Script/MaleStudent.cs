@@ -13,10 +13,10 @@ public class MaleStudent : AI
     public Type type;
     [Header("Gameplay Setting")]
     public int scoreValue;
-    [SerializeField]
-    private float manaCostNomal;
-    [SerializeField]
-    private float manaCostRival;
+    [SerializeField] private int scoreValueSecond;
+    [SerializeField] private int scoreValueRival;
+    [SerializeField] private float manaCostNomal;
+    [SerializeField] private float manaCostRival;
 
     [Header("HeartGuard Status")]
     [SerializeField] private Slider heartGuardGauge;
@@ -71,15 +71,16 @@ public class MaleStudent : AI
             case State.None:
                 useGauge.gameObject.SetActive(true);
                 currentState = State.BeingAttacked;
-            IsMove = false;
+                IsMove = false;
                 UpdateAnim(animParam.hit); 
-            StartCoroutine(EyeLaserAttacked());
+                StartCoroutine(EyeLaserAttacked());
                 break;
             case State.RivalMatch:
                 UpdateAnim(animParam.hit_rival); 
                 if (!GameManager.Instance.ManaManager.ManaIncrease(-manaCostRival))
                     break;
                 useGauge.value += useGauge.maxValue / (timeToBreakGauge / callTime);
+                GameManager.Instance.Score += scoreValueRival;
                 IsBreakHeartGuard(); 
                 break;
         } 
@@ -103,10 +104,17 @@ public class MaleStudent : AI
         if (useGauge.value == 1)
         {
             Debug.Log($"²¿½É ¼º°ø");
-            if(currentState==State.RivalMatch)
-                GameManager.Instance.ManaManager.DropMana(this.transform.position, 1+ manaAmount*GetRivalCount());
+            int rivalCount = GetRivalCount();
+            if (currentState==State.RivalMatch)
+            {
+                int scoreValue = rivalCount == 1 ? 1500 :
+                    rivalCount == 2 ? 3000 :
+                    rivalCount == 3 ? 5000 :
+                    rivalCount == 4 ? 15000:500;
+                GameManager.Instance.ManaManager.DropHeart(this.transform.position, 1+ manaAmount* rivalCount, scoreValue);
+            }
             else
-                GameManager.Instance.ManaManager.DropMana(this.transform.position,1);
+                GameManager.Instance.ManaManager.DropHeart(this.transform.position, 1, 500);
             currentState = State.OwnedByPlayer;
             breakHeartGuard?.Invoke(this);
             ReceiveInterruptedEyeLaser();
@@ -135,6 +143,8 @@ public class MaleStudent : AI
             if (!GameManager.Instance.ManaManager.ManaIncrease(-manaCostNomal / breakTime))
                 break;
             useGauge.value += useGauge.maxValue / breakTime;
+            currentTime += callTime;
+            GameManager.Instance.Score += Mathf.RoundToInt(scoreValueSecond * callTime);
             if (IsBreakHeartGuard())
             {
                 break;
@@ -142,7 +152,6 @@ public class MaleStudent : AI
             // ¶óÀÌ¹ú ¸ÅÄ¡ 
             if(GetRivalCount() > 0)
             {
-                currentTime += callTime;
                 if (currentTime >= rivalDelayTime)
                 {
                     RivalGauge.value = useGauge.value;

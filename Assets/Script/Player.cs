@@ -113,7 +113,7 @@ public class Player : MonoBehaviour
                     moveVec = Vector2.zero;
                     OnPlayerStopped?.Invoke();
                     if(hit.collider.gameObject.layer == wallLayer)
-                        GameManager.Instance.UIManger.SetActiveFloorButton(true);
+                        GameManager.Instance.UIManager.SetActiveFloorButton(true);
                     break;
                 }
             }
@@ -129,7 +129,7 @@ public class Player : MonoBehaviour
                 {
                     break;
                 }
-                GameManager.Instance.UIManger.SetActiveFloorButton(false);
+                GameManager.Instance.UIManager.SetActiveFloorButton(false);
                 wallState = WallState.None;
 
             }
@@ -274,6 +274,9 @@ public class Player : MonoBehaviour
         eyeLaser.EyeLaserOn(false);
         // 꼬심에 성공했는지 확인 하고 추가해야 함
         //followingManager.AddFollower(male);
+        if (male.type == MaleStudent.Type.named)
+            GameManager.Instance.clearNamedCount++;
+        GameManager.Instance.clearMaleCount++;
 
     }
     public bool ReceiveShoulderBump(float delayTime)

@@ -2,17 +2,20 @@ using UnityEngine;
 
 public class Mana : MonoBehaviour
 {
-    private float value;
+    private float manaValue;
+    private int scoreValue;
 
-    public void Init(float v)
+    public void Init(float m,int s)
     {
-        value = v;
+        manaValue = m;
+        scoreValue = s;
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.CompareTag("Player"))
         {
-            GameManager.Instance.ManaManager.ManaIncrease(value);
+            GameManager.Instance.ManaManager.ManaIncrease(manaValue);
+            GameManager.Instance.Score += scoreValue;
             Destroy(gameObject);
         }
     }
