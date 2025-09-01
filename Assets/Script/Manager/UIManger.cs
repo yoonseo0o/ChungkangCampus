@@ -23,6 +23,9 @@ public class UIManger : MonoBehaviour
     [SerializeField] private Sprite[] gradeImg;
     [SerializeField] private Image gayoSR;
     [SerializeField] private Sprite[] gayoImg;
+    [SerializeField] private GameObject sticker_kanbi;
+    [SerializeField] private GameObject sticker_anini;
+    [SerializeField] private GameObject sticker_yungcon;
     [Header("Fade")]
     [SerializeField] private Image fadeImg;
     [SerializeField] private float fadeSpeed;
@@ -82,10 +85,22 @@ public class UIManger : MonoBehaviour
             case GameManager.ScoreGrade.S:
                 gradeSR.sprite = gradeImg[0]? gradeImg[0]: gradeSR.sprite;
                 gayoSR.sprite = gayoImg[0] ? gayoImg[0] : gayoSR.sprite;
+                if (GameManager.Instance.Kanbi)
+                    sticker_kanbi.SetActive(true);
+                if (GameManager.Instance.Anini)
+                    sticker_anini.SetActive(true);
+                if (GameManager.Instance.Yungcon)
+                    sticker_yungcon.SetActive(true);
                 break;
             case GameManager.ScoreGrade.A:
                 gradeSR.sprite = gradeImg[1] ? gradeImg[1] : gradeSR.sprite;
                 gayoSR.sprite = gayoImg[1] ? gayoImg[1] : gayoSR.sprite;
+                if (GameManager.Instance.Kanbi)
+                    sticker_kanbi.SetActive(true);
+                if (GameManager.Instance.Anini)
+                    sticker_anini.SetActive(true);
+                if (GameManager.Instance.Yungcon)
+                    sticker_yungcon.SetActive(true);
                 break;
             case GameManager.ScoreGrade.B:
                 gradeSR.sprite = gradeImg[2] ? gradeImg[2] : gradeSR.sprite;

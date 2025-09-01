@@ -37,6 +37,7 @@ public class GameManager : MonoBehaviour
     }
     public int clearNamedCount;
     public int clearMaleCount;
+    public bool Kanbi,Yungcon,Anini;
     public Player player;
     [Header("Manager")]
     public UIManger UIManager;
@@ -65,7 +66,7 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1.0f;
         StartCoroutine(Timer());
     }
-    public enum ScoreGrade { S=150000,A=50000,B=30000,C=0};
+    public enum ScoreGrade { S = 150000, A = 50000, B = 30000, C = 0 };
     private void Init()
     {
         Score = 0;
@@ -106,7 +107,8 @@ public class GameManager : MonoBehaviour
     private void EndGame()
     {
         Debug.Log("게임 종료");
-        Time.timeScale = 0f;
+        // timescale 0하면 애니메이션 작동안함
+        //Time.timeScale = 0f;
         if (Score >= (int)ScoreGrade.S && clearNamedCount >= 3)
         {
             UIManager.EndingResource(ScoreGrade.S);

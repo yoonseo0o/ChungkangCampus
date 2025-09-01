@@ -275,7 +275,21 @@ public class Player : MonoBehaviour
         // 꼬심에 성공했는지 확인 하고 추가해야 함
         //followingManager.AddFollower(male);
         if (male.type == MaleStudent.Type.named)
+        {
+            switch (male.name)
+            {
+                case "NKanbi":
+                    GameManager.Instance.Kanbi = true;
+                    break;
+                case "NAnini":
+                    GameManager.Instance.Anini = true;
+                    break;
+                case "NYungcon":
+                    GameManager.Instance.Yungcon = true;
+                    break;
+            }
             GameManager.Instance.clearNamedCount++;
+        }
         GameManager.Instance.clearMaleCount++;
 
     }
