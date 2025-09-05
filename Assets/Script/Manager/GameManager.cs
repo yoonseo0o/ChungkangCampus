@@ -1,12 +1,35 @@
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    /// <summary>
-    /// second
-    /// </summary>
+    public enum State { Playing,Paused,GameOver}
+    [SerializeField] private State _state;
+    public State state 
+    { 
+        get 
+        { 
+            return _state; 
+        } 
+        set 
+        { 
+            _state = value;
+            switch(value)
+            {
+                case State.Playing:
+                    Time.timeScale = 1.0f;
+                    break;
+                case State.Paused:
+                    Time.timeScale = 0f;
+                    break;
+                case State.GameOver:
+                    Time.timeScale = 0f;
+                    break;
+            }
+        } 
+    }
     [SerializeField] float playTime;
     [SerializeField] private float _currentTime;
     private float CurrentTime
@@ -55,16 +78,19 @@ public class GameManager : MonoBehaviour
         clearNamedCount = 0;
     }
     private void Start()
-    {
-        //Debug.Log("Start()");
+    { 
         Init();
-        Time.timeScale = 0f;
-        IsTimeFlow = true;
     }
     public void GameStart()
     {
-        Time.timeScale = 1.0f;
+        Debug.Log("GameStart");
+        state = State.Playing;
         StartCoroutine(Timer());
+    }
+    public void GameReStart()
+    {
+        state = State.Paused;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
     public enum ScoreGrade { S = 150000, A = 50000, B = 30000, C = 0 };
     private void Init()
@@ -72,6 +98,10 @@ public class GameManager : MonoBehaviour
         Score = 0;
         CurrentTime = 0;
         ManaManager.SetMana(4);
+        UIManager.SetStartScene(true);
+        state = State.Paused;
+        IsTimeFlow = true;
+        Debug.Log($"Init : {state}");
         //UIManger.SetTimerUI(currentTime);
     }
     void OnEnable() { 
@@ -86,9 +116,8 @@ public class GameManager : MonoBehaviour
         Debug.Log("Timer()");
         while (true)
         {
-            if(IsTimeFlow)
+            if(state == State.Playing&&IsTimeFlow)
             {
-                //Time.timeScale = 1f;
                 CurrentTime += Time.deltaTime;
                 if (CurrentTime >= playTime)
                 {
@@ -99,7 +128,6 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                //Time.timeScale = 0f;
             }
             yield return null;
         }
@@ -107,6 +135,7 @@ public class GameManager : MonoBehaviour
     private void EndGame()
     {
         Debug.Log("게임 종료");
+        state = State.GameOver;
         // timescale 0하면 애니메이션 작동안함
         //Time.timeScale = 0f;
         if (Score >= (int)ScoreGrade.S && clearNamedCount >= 3)

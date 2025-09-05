@@ -55,6 +55,7 @@ public class FloorManager : MonoBehaviour
     {
         // 시간 흐르게
         GameManager.Instance.FollowerManager.followSpeed = boyDefaultSpeed;
+
         GameManager.Instance.IsTimeFlow = true;
         Debug.Log("시간이 흐른다아");
     }

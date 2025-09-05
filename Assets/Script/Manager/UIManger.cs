@@ -15,7 +15,8 @@ public class UIManger : MonoBehaviour
     [SerializeField] private Slider feverTimeGauge;
     [SerializeField] private GameObject floorButton;
     private float manaValue=-1;
-
+    [Header("Start")]
+    [SerializeField] private GameObject start;
     [Header("Ending")]
     [SerializeField] private GameObject ending;
     [SerializeField] private TMP_Text endingScoreText;
@@ -30,7 +31,10 @@ public class UIManger : MonoBehaviour
     [SerializeField] private Image fadeImg;
     [SerializeField] private float fadeSpeed;
     public Action fadeComplete;
-    
+    private void OnDestroy()
+    {
+        fadeComplete = null;
+    }
     public void SetTimerUI(float value)
     {
         timer.value = value;
@@ -112,7 +116,10 @@ public class UIManger : MonoBehaviour
                 break;
         }
     }
-
+    public void SetStartScene(bool value)
+    {
+        start.SetActive(value);
+    }
     public IEnumerator FadeIn()
     {
         fadeImg.gameObject.SetActive(true);

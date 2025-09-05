@@ -57,6 +57,12 @@ public class MaleStudent : AI
         else
             FollowingTarget();
     }
+    private void OnDestroy()
+    {
+        followTarget = null;
+        rivalMatch = null;
+        breakHeartGuard = null;
+    }
     public void ReceiveFocus(bool IsOn)
     {
         focusCursor.SetActive(IsOn);

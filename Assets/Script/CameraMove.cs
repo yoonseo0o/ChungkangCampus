@@ -29,9 +29,18 @@ public class CameraMove : MonoBehaviour
     {
         Debug.DrawLine(transform.position-new Vector3(targetOffsetX, 0,0), transform.position + new Vector3(targetOffsetX, 0, 0),Color.green);
     }
+    private void OnDestroy()
+    {
+        if(moveCo!= null)
+        {
+            StopCoroutine(moveCo);
+        }
+        Player.OnPlayerMoved -= Move;
+        Player.OnPlayerStopped -= StopFollowTarget;
+    }
     public void Move(Vector2 vec)
     {
-
+        
         DirectionState state = vec.x>0? DirectionState.Left: DirectionState.Right; 
         if (currentState == state)
         {
@@ -47,7 +56,9 @@ public class CameraMove : MonoBehaviour
         moveCo = StartCoroutine(FollowTarget());
     }
     private IEnumerator FollowTarget()
-    { 
+    {
+        if (GameManager.Instance.state != GameManager.State.Playing)
+            yield break ;
         Vector3 targetVec = new Vector3(
             currentState == DirectionState.Left ?
             target.position.x + targetOffsetX : target.position.x - targetOffsetX,
@@ -55,10 +66,11 @@ public class CameraMove : MonoBehaviour
          
         while (true)
         {
+            Debug.Log("FollowTarget");
             if (wallState == WallState.None)
             {
-                RaycastHit2D rightHit = Physics2D.Raycast(transform.position, Vector3.right, targetOffsetX, LayerMask.GetMask("wall"));
-                RaycastHit2D leftHit = Physics2D.Raycast(transform.position, Vector3.left, targetOffsetX, LayerMask.GetMask("wall"));
+                RaycastHit2D rightHit = Physics2D.Raycast(transform.position, Vector3.right, targetOffsetX, LayerMask.GetMask("wall") | LayerMask.GetMask("endWall"));
+                RaycastHit2D leftHit = Physics2D.Raycast(transform.position, Vector3.left, targetOffsetX, LayerMask.GetMask("wall") | LayerMask.GetMask("endWall"));
                 if (rightHit || leftHit)
                 {
                     wallState = rightHit ? WallState.Right : WallState.Left;

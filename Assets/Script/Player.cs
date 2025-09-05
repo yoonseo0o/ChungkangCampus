@@ -67,6 +67,13 @@ public class Player : MonoBehaviour
 
         EvaluateInput();
     }
+    private void OnDestroy()
+    {
+        if (moveCo != null)
+            StopCoroutine(moveCo);
+        OnPlayerMoved = null;
+        OnPlayerStopped = null;
+    }
     private void Move()
     {
             switch (moveState)
@@ -98,6 +105,8 @@ public class Player : MonoBehaviour
     }
     IEnumerator WalkCo(Vector2 vec)
     {
+        if (GameManager.Instance.state != GameManager.State.Playing)
+            yield break;
         OnPlayerMoved?.Invoke(vec);
         while (true)
         {
