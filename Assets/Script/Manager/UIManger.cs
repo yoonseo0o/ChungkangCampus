@@ -16,6 +16,7 @@ public class UIManger : MonoBehaviour
     [SerializeField] private GameObject floorButton;
     private float manaValue=-1;
     [Header("Start")]
+    public TMP_InputField playTime;
     [SerializeField] private GameObject start;
     [Header("Ending")]
     [SerializeField] private GameObject ending;

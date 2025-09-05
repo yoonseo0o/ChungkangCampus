@@ -83,6 +83,7 @@ public class GameManager : MonoBehaviour
     }
     public void GameStart()
     {
+        playTime = float.Parse(UIManager.playTime.text);
         Debug.Log("GameStart");
         state = State.Playing;
         StartCoroutine(Timer());
