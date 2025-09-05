@@ -248,7 +248,7 @@ public class Player : MonoBehaviour
                 moveCo = null;
             }
             if (moveVec == Vector2.left)
-            { 
+            {
                 eyeLaser.transform.rotation = Quaternion.Euler(0,0,0);
             }
             else
@@ -330,7 +330,7 @@ public class Player : MonoBehaviour
     {
         moveState = MoveState.Idle;
     }*/
-    IEnumerator DelayAction(float delay, System.Action action)
+    public IEnumerator DelayAction(float delay, System.Action action)
     {
         yield return new WaitForSeconds(delay);
         action?.Invoke();

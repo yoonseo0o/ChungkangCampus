@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -83,7 +84,18 @@ public class GameManager : MonoBehaviour
     }
     public void GameStart()
     {
-        playTime = float.Parse(UIManager.playTime.text);
+        try
+        {
+            playTime = float.Parse(UIManager.playTime.text);
+            Debug.Log($"try : {playTime}"); 
+        }
+        catch (Exception e)/**/
+        {
+            Debug.Log($"catch : {e}");
+            playTime = 150;
+        }
+        /*playTime = float.Parse(UIManager.playTime.text);
+        if(playTime <= 0) playTime = 150;*/
         Debug.Log("GameStart");
         state = State.Playing;
         StartCoroutine(Timer());

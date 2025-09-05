@@ -2,8 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 public class FollowerManager : MonoBehaviour
 { 
-    private List<MaleStudent> followers;
-    
     public List<MaleStudent> followerNamed;
     public List<MaleStudent> followerMob;
     public float followDistance = -2.5f;
@@ -11,8 +9,6 @@ public class FollowerManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        followers = new List<MaleStudent>();
-
         followerNamed = new List<MaleStudent>();
         followerMob = new List<MaleStudent>();
 
@@ -24,16 +20,7 @@ public class FollowerManager : MonoBehaviour
         if (male.currentState!=MaleStudent.State.OwnedByPlayer)
         {
             return;
-        } /*
-        if(followers.Count > 0)
-        {
-            male.followTarget = followers[followers.Count - 1].transform;
-        }
-        else
-        {
-            male.followTarget = transform;
-        }
-        followers.Add(male);*/
+        } 
         switch(male.type)
         {
             case MaleStudent.Type.named:

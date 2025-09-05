@@ -26,7 +26,8 @@ public class GrassesTeacher : MonoBehaviour
         if (collision.CompareTag("Player") && !isStolen)
         {
             isStolen = true;
-            Instantiate(grassesItem, transform.position+new Vector3(-1.2f,-2.1f,0), Quaternion.identity, transform);
+            GameObject obj = Instantiate(grassesItem, transform.position+new Vector3(-1.2f,-2.1f,0), Quaternion.identity, transform);
+            StartCoroutine (GameManager.Instance.player.DelayAction(1f, () => { obj.GetComponent<BoxCollider2D>().enabled = true; }));
             animator.SetFloat("anim", 1);
         }
     }
